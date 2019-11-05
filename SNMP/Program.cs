@@ -20,7 +20,6 @@ namespace Regex_example
             Console.WriteLine(
                 String.Format("{0} podany adres to {1}poprawny adres email", napis,
                                 regEmail.IsMatch(napis) ? "" : "nie"));
-            Console.ReadKey();
         }
     }
 }

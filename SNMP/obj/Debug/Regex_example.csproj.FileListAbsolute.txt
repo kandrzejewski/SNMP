@@ -4,3 +4,9 @@ C:\Users\Kamil\Desktop\Regex\Regex\obj\Debug\Regex.pdb
 C:\Users\Kamil\Desktop\Regex\Regex\obj\Debug\Regex_example.csprojResolveAssemblyReference.cache
 C:\Users\Kamil\Desktop\Regex\Regex\bin\Debug\Regex.exe
 C:\Users\Kamil\Desktop\Regex\Regex\bin\Debug\Regex.pdb
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\bin\Debug\Regex.exe.config
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\obj\Debug\Regex.exe
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\obj\Debug\Regex.pdb
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\bin\Debug\Regex.exe
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\bin\Debug\Regex.pdb
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\obj\Debug\Regex_example.csprojResolveAssemblyReference.cache
