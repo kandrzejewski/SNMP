@@ -1,8 +1,17 @@
-ghgfv@wp.pl
-ggg
-ggtg.pl
-ggggr@gfgrhhh.com
-Plik2
-fff
-ththytjytjtyhthtrhsdgfsfewefe
-dfgfdg@kamile.com
+{Person: 1} 
+e-mail: ghgfv@wp.pl {3}  
+Country - Poland {4}
+title: gg {1}
+name: Grzegorz Szymański {2}
+
+{Person: 2}
+e-mail: ggtg@euro.ch {3}
+Country - Switzerland {4}
+title: XD {1}
+name: Adam Dąbrowski {2}
+
+{Person: 4}
+e-mail: ggggr@jp.cn {3}
+Country - China {4}
+title: #include<jpochm.h> {1}
+name: Janusz Pochmara {2}

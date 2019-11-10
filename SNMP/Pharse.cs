@@ -5,24 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-
 namespace Regex_example
 {
+    
     class Pharse
     {
         public void PharseText(string _text)
         {
-            Regex regEmail = new Regex(@"(?<name>^[a-z][a-z0-9_.-kam-]*)@(?<domain>[a-z0-9]*\.[a-z]{2,3}$)");
+            RegexOptions options = RegexOptions.Singleline & RegexOptions.Compiled;
+            Regex regEmail = new Regex(@"{Person:\s*(?<Person>[1-9])}\s*e-mail:\s*" + 
+                                        @"(?<email>[a-z][a-z0-9_.-kam-]*@[a-z0-9]*\.[a-z]{2,3})\s*{[0-9]}\s*Country\s*-\s*" + 
+                                        @"(?<country>\w*)\s*{[1-9]}\s*title:\s*" + 
+                                        @"(?<title>.*?)\s*{[1-9]}\s*name:\s*" + 
+                                        @"(?<name>\w*\s*\w*)\s*{[1-9]}", options);
             Regex regNewFile = new Regex(@"Plik2");
 
             MatchCollection matches = regEmail.Matches(_text);
             foreach (Match _match in matches)
             {
-                Console.WriteLine("Adres e-mail: " + _match);
-                Console.Write(regEmail.GroupNameFromNumber(1) + ": ");
-                Console.WriteLine(_match.Groups[1].Value);
-                Console.Write(regEmail.GroupNameFromNumber(2) + ": ");
-                Console.WriteLine(_match.Groups[2].Value);
+                for(int _iGroupNumber = 1; _iGroupNumber < _match.Groups.Count; _iGroupNumber++)
+                {
+                    Console.WriteLine("Group {0}: {1}", regEmail.GroupNameFromNumber(_iGroupNumber), _match.Groups[_iGroupNumber].Value);
+                }
             }
 
             if (regNewFile.IsMatch(_text))
@@ -31,7 +35,6 @@ namespace Regex_example
                 ReadFile NewFile = new ReadFile();
                 NewFile.ReadFromFile(_text);
             }
-            // Console.WriteLine(_text);
         }
     }
 }

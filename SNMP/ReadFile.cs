@@ -14,12 +14,11 @@ namespace Regex_example
         public void ReadFromFile(string sFileName) {
             try
             {
-                var sLines = File.ReadLines(@"../data/"+ sFileName + @".txt", Encoding.UTF8);
+                var sLines = File.ReadAllText(@"../data/" + sFileName + @".txt", Encoding.UTF8);
+                Console.WriteLine("Odczytano plik {0}!", sFileName);
+                //Console.WriteLine(sLines);
                 Pharse PharseLine = new Pharse();
-                foreach (var line in sLines)
-                {
-                    PharseLine.PharseText(line);
-                }
+                PharseLine.PharseText(sLines);
             }
             catch (IOException e)
             {
