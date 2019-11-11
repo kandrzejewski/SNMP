@@ -25,6 +25,6 @@ namespace Regex_example
             Console.WriteLine("------------");
         }
 
-        public Data oSubData = new Data();
+        //public Data oSubData = new Data();
     }
 }

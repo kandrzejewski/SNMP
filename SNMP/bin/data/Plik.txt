@@ -9,7 +9,7 @@ e-mail: ggtg@euro.ch {3}
 Country - Switzerland {4}
 title: XD {1}
 name: Adam Dąbrowski {2}
-
+openfile - "Plik3"
 {Person: 4}
 e-mail: ggggr@jp.cn {3}
 Country - China {4}
