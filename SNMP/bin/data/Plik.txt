@@ -3,7 +3,7 @@ e-mail: ghgfv@wp.pl {3}
 Country - Poland {4}
 title: gg {1}
 name: Grzegorz Szymański {2}
-
+openfile - "Plik2"
 {Person: 2}
 e-mail: ggtg@euro.ch {3}
 Country - Switzerland {4}
