@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Regex_example
 {
     
-    class Pharse
+    class Pharse: Pharser
     {
-        public void PharseText(string _text)
+        private void PharseText(string _text)
         {
             RegexOptions options = RegexOptions.Singleline & RegexOptions.Compiled;
             Regex regEmail = new Regex(@"{Person:\s*(?<person>[1-9])}\s*e-mail:\s*" + 
@@ -21,11 +22,14 @@ namespace Regex_example
                                        @".*?|openfile\s*-\s*" + "\"" + @"(?<filename>.*?)" + "\"" + @"\s*", options);
 
             MatchCollection matches = regEmail.Matches(_text);
-
             foreach (Match _match in matches)
             {
-                Data oData = new Data();
-                for(int _iGroupNumber = 1; _iGroupNumber < _match.Groups.Count; _iGroupNumber++)
+
+                if(_match.Groups[6].Value == "")
+                {
+                    lData.Add(new Data()); 
+                }               
+                for (int _iGroupNumber = 1; _iGroupNumber < _match.Groups.Count; _iGroupNumber++)
                 {
                     if (_match.Groups[_iGroupNumber].Value != "")
                     {
@@ -34,27 +38,27 @@ namespace Regex_example
                         {
                             case "person":
                                 {
-                                    oData.id = Int32.Parse(_match.Groups[_iGroupNumber].Value);
+                                    lData.Last().id = Int32.Parse(_match.Groups[_iGroupNumber].Value);
                                     continue;
                                 }
                             case "email":
                                 {
-                                    oData.email = _match.Groups[_iGroupNumber].Value;
+                                    lData.Last().email = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
                             case "country":
                                 {
-                                    oData.country = _match.Groups[_iGroupNumber].Value;
+                                    lData.Last().country = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
                             case "title":
                                 {
-                                    oData.title = _match.Groups[_iGroupNumber].Value;
+                                    lData.Last().title = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
                             case "name":
                                 {
-                                    oData.name = _match.Groups[_iGroupNumber].Value;
+                                    lData.Last().name = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
                             case "filename":
@@ -65,7 +69,12 @@ namespace Regex_example
                         }
                     }                    
                 }
-                oData.WriteData();
+                //if(_match.Groups[6].Value == "")
+                //{
+                //    lData.Last().WriteData();
+                //}
+                    
+                
             }
         }
 
@@ -75,8 +84,26 @@ namespace Regex_example
             Console.WriteLine(@"..............................");
             Console.Write(@"Wystąpiło wywołanie pliku: ");
             Console.WriteLine(_filename);
-            ReadFile NewFile = new ReadFile();
-            NewFile.ReadFromFile(_filename);
+            //Pharse NewFile = new Pharse();
+            ReadFromFile(_filename);
         }
+
+        public void ReadFromFile(string sFileName)
+        {
+            try
+            {
+                var sLines = File.ReadAllText(@"../data/" + sFileName + @".txt", Encoding.UTF8);
+                Console.WriteLine("Odczytano plik {0}!", sFileName);
+                //Console.WriteLine(sLines);
+                PharseText(sLines);
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("Nie można otworzyć pliku:");
+                Console.WriteLine(e.Message);
+            }
+
+        }
+
     }
 }

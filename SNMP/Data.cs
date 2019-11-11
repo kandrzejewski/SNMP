@@ -6,13 +6,22 @@ using System.Threading.Tasks;
 
 namespace Regex_example
 {
-    class Data
+    public class Data
     {
-        public int id;
-        public string email;
-        public string country;
-        public string title;
-        public string name;
+        public int id {get; set;}
+        public string email { get; set; }
+        public string country { get; set; }
+        public string title { get; set; }
+        public string name { get; set; }
+
+        /*public Data(int _id, string _email, string _country, string _title, string _name)
+        {
+            this.id = _id;
+            this.email = _email;
+            this.country = _country;
+            this.title = _title;
+            this.name = _name;
+        }*/
 
         public void WriteData()
         {
