@@ -8,7 +8,8 @@ namespace Regex_example
 {
     public class Data
     {
-        public int id {get; set;}
+        public int id { get; set; }
+        public int parrentId {get; set;}
         public string email { get; set; }
         public string country { get; set; }
         public string title { get; set; }
@@ -27,6 +28,7 @@ namespace Regex_example
         {
             Console.WriteLine("------------");
             Console.WriteLine(id);
+            Console.WriteLine(parrentId);
             Console.WriteLine(email);
             Console.WriteLine(country);
             Console.WriteLine(title);

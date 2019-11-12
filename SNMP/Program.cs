@@ -16,17 +16,21 @@ namespace Regex_example
             DataHub oDataHub = new DataHub();
 
             oPharser.RunPharser();
+            oDataHub.GenerateTree();
 
-            foreach (Data _Data in Pharser.lData)
+
+            /*foreach (Data _Data in DataHub.lData)
             {
                 Console.WriteLine("-------------------");
                 Console.WriteLine(_Data.id);
+                Console.WriteLine(_Data.parrentId);
                 Console.WriteLine(_Data.email);
                 Console.WriteLine(_Data.country);
                 Console.WriteLine(_Data.title);
                 Console.WriteLine(_Data.name);
                 Console.WriteLine("-------------------");
-            }
+            }*/
+            //Console.WriteLine((char)6);
         }
     }
 }

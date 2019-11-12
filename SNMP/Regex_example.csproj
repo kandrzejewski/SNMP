@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TreeLeaf.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Pharse.cs" />
     <Compile Include="Program.cs" />

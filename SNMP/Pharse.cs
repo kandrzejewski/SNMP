@@ -18,16 +18,17 @@ namespace Regex_example
                                        @"(?<email>[a-z][a-z0-9_.-]*@[a-z0-9]*\.[a-z]{2,3})\s*{[0-9]}\s*Country\s*-\s*" + 
                                        @"(?<country>\w*)\s*{[1-9]}\s*title:\s*" + 
                                        @"(?<title>.*?)\s*{[1-9]}\s*name:\s*" +
-                                       @"(?<name>\w*\s*\w*)\s*{[1-9]}.*?" +
-                                       @".*?|openfile\s*-\s*" + "\"" + @"(?<filename>.*?)" + "\"" + @"\s*", options);
+                                       @"(?<name>\w*\s*\w*)\s*{[1-9]}\s*parrent:\s*{" +
+                                       @"(?<parrent>[0-9])}" +
+                                       @"|openfile\s*-\s*" + "\"" + @"(?<filename>.*?)" + "\"" + @"\s*", options);
 
             MatchCollection matches = regEmail.Matches(_text);
             foreach (Match _match in matches)
             {
 
-                if(_match.Groups[6].Value == "")
+                if(_match.Groups[7].Value == "")
                 {
-                    lData.Add(new Data()); 
+                    DataHub.lData.Add(new Data()); 
                 }               
                 for (int _iGroupNumber = 1; _iGroupNumber < _match.Groups.Count; _iGroupNumber++)
                 {
@@ -38,27 +39,32 @@ namespace Regex_example
                         {
                             case "person":
                                 {
-                                    lData.Last().id = Int32.Parse(_match.Groups[_iGroupNumber].Value);
+                                    DataHub.lData.Last().id = Int32.Parse(_match.Groups[_iGroupNumber].Value);
                                     continue;
                                 }
                             case "email":
                                 {
-                                    lData.Last().email = _match.Groups[_iGroupNumber].Value;
+                                    DataHub.lData.Last().email = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
                             case "country":
                                 {
-                                    lData.Last().country = _match.Groups[_iGroupNumber].Value;
+                                    DataHub.lData.Last().country = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
                             case "title":
                                 {
-                                    lData.Last().title = _match.Groups[_iGroupNumber].Value;
+                                    DataHub.lData.Last().title = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
                             case "name":
                                 {
-                                    lData.Last().name = _match.Groups[_iGroupNumber].Value;
+                                    DataHub.lData.Last().name = _match.Groups[_iGroupNumber].Value;
+                                    continue;
+                                }
+                            case "parrent":
+                                {
+                                    DataHub.lData.Last().parrentId = Int32.Parse(_match.Groups[_iGroupNumber].Value);
                                     continue;
                                 }
                             case "filename":
@@ -71,10 +77,10 @@ namespace Regex_example
                 }
                 //if(_match.Groups[6].Value == "")
                 //{
-                //    lData.Last().WriteData();
+                //     DataHub.lData.Last().WriteData();
                 //}
-                    
-                
+
+
             }
         }
 

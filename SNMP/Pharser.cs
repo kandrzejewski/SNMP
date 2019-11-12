@@ -9,14 +9,10 @@ namespace Regex_example
 {
     public class Pharser
     {
-
-        public static List<Data> lData = new List<Data>();
-
         public void RunPharser()
         {
             Pharse oPharse = new Pharse();
             oPharse.ReadFromFile("Plik");           
         }
-
     }
 }
