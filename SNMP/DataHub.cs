@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Regex_example
 {
-    public class DataHub
+    class DataHub
     {
         public static List<Data> lData;
-        Tree oTree;
+        public Tree oTree;
+        private int iWriteIteration = 0;
         public DataHub()
         {
             lData = new List<Data>();
@@ -19,20 +20,24 @@ namespace Regex_example
         public void GenerateTree()
         {
             oTree.FindRoot();
-            WriteTree();
+            //WriteTree();
             
         }
         public void WriteTree()
         {
-            oTree.oRoot.oData.WriteData();
+
+            oTree.oRoot.oData.WriteData(0);
             WriteChildren(oTree.oRoot.Childrens);
         }
-        public void WriteChildren(List<TreeLeaf> _LeafList)
+        private void WriteChildren(List<TreeLeaf> _LeafList)
         {
+            iWriteIteration++;
             foreach (TreeLeaf _Leaf in _LeafList)
             {
-                _Leaf.oData.WriteData();
+                _Leaf.oData.WriteData(iWriteIteration);
                 WriteChildren(_Leaf.Childrens);
+                iWriteIteration = 1;
+
             }
         }
     }

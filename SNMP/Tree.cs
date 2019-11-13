@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Regex_example
 {
-    public class Tree
+    class Tree
     {
         public TreeLeaf oRoot;
         public Tree()
@@ -24,7 +24,7 @@ namespace Regex_example
             }
             FindChildrens(oRoot);
         }
-        public void FindChildrens(TreeLeaf _Parrent)
+        private void FindChildrens(TreeLeaf _Parrent)
         {
             foreach (Data _Data in DataHub.lData)
             {

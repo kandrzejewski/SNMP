@@ -17,7 +17,7 @@ namespace Regex_example
 
             oPharser.RunPharser();
             oDataHub.GenerateTree();
-
+            oDataHub.WriteTree();
 
             /*foreach (Data _Data in DataHub.lData)
             {
