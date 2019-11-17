@@ -4,42 +4,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Regex_example
+namespace SNMP
 {
     class DataHub
     {
-        public static List<Data> lData;
+        public static List<ObjectType> lData;
+
+        public static List<DataType> lDataType;
         public Tree oTree;
         private int iWriteIteration = 0;
+
         public DataHub()
         {
-            lData = new List<Data>();
+            lData = new List<ObjectType>();
+            lDataType = new List<DataType>();
             oTree = new Tree();
         }
 
         public void GenerateTree()
         {
             oTree.FindRoot();
-            //WriteTree();
-            
         }
+
         public void WriteTree()
         {
 
-            oTree.oRoot.oData.WriteData(0);
+            oTree.oRoot.oData.PresentData(iWriteIteration);
             WriteChildren(oTree.oRoot.Childrens);
         }
+
         private void WriteChildren(List<TreeLeaf> _LeafList)
         {
             iWriteIteration++;
             foreach (TreeLeaf _Leaf in _LeafList)
             {
-                _Leaf.oData.WriteData(iWriteIteration);
+                _Leaf.oData.PresentData(iWriteIteration);
                 WriteChildren(_Leaf.Childrens);
-                iWriteIteration = 1;
-
+                iWriteIteration--;
             }
         }
     }
-
 }

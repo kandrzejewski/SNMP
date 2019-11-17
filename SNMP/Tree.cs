@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Regex_example
+namespace SNMP
 {
     class Tree
     {
@@ -15,9 +15,9 @@ namespace Regex_example
         }
         public void FindRoot()
         {
-            foreach(Data _Data in DataHub.lData)
+            foreach(ObjectType _Data in DataHub.lData)
             {
-                if (_Data.parrentId == 0)
+                if (_Data.OID == 0)
                 {
                     oRoot.oData = _Data;
                 }
@@ -26,9 +26,9 @@ namespace Regex_example
         }
         private void FindChildrens(TreeLeaf _Parrent)
         {
-            foreach (Data _Data in DataHub.lData)
+            foreach (ObjectType _Data in DataHub.lData)
             {
-                if (_Data.parrentId == _Parrent.oData.id)
+                if (_Data.ParrentName == _Parrent.oData.Name)
                 {
                     _Parrent.Childrens.Add(new TreeLeaf());
                     _Parrent.Childrens.Last().oData = _Data;

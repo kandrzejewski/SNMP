@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Regex_example
+namespace SNMP
 {
     public class TreeLeaf
     {
         public List<TreeLeaf> Childrens;
-        public Data oData;
+        public ObjectType oData;
         public TreeLeaf()
         {
-            oData = new Data();
+            oData = new ObjectType();
             Childrens = new List<TreeLeaf>();
         }
     }

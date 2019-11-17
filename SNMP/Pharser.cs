@@ -5,14 +5,14 @@ using System.Text;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Regex_example
+namespace SNMP
 {
-    public class Pharser
+    class Pharser: DataHub
     {
         public void RunPharser()
         {
             Pharse oPharse = new Pharse();
-            oPharse.ReadFromFile("Plik");           
+            oPharse.ReadFromFile("RFC1213-MIB");           
         }
     }
 }

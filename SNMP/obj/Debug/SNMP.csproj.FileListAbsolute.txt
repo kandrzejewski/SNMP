@@ -1,0 +1,12 @@
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\obj\Debug\SNMP.csprojResolveAssemblyReference.cache
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\bin\Debug\SNMP.exe.config
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\bin\Debug\SNMP.exe
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\bin\Debug\SNMP.pdb
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\obj\Debug\SNMP.exe
+C:\Users\Kamil\Source\Repos\kandrzejewski\SNMP\SNMP\obj\Debug\SNMP.pdb
+C:\Users\Kamil\Desktop\SNMP\bin\Debug\SNMP.exe.config
+C:\Users\Kamil\Desktop\SNMP\obj\Debug\SNMP.exe
+C:\Users\Kamil\Desktop\SNMP\obj\Debug\SNMP.pdb
+C:\Users\Kamil\Desktop\SNMP\bin\Debug\SNMP.exe
+C:\Users\Kamil\Desktop\SNMP\bin\Debug\SNMP.pdb
+C:\Users\Kamil\Desktop\SNMP\obj\Debug\SNMP.csprojResolveAssemblyReference.cache
