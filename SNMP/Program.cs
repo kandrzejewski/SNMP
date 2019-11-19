@@ -17,7 +17,8 @@ namespace SNMP
 
             oPharser.RunPharser();
             oDataHub.GenerateTree();
-            //oDataHub.WriteTree();
+            oDataHub.WriteTree();
+            //oDataHub.WriteTypes();
         }
     }
 }

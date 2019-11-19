@@ -43,5 +43,12 @@ namespace SNMP
                 iWriteIteration--;
             }
         }
+        public void WriteTypes()
+        {
+            foreach(DataType _DataType in lDataType)
+            {
+                _DataType.PresentData();
+            }
+        }
     }
 }

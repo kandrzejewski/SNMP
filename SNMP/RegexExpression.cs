@@ -17,7 +17,12 @@ namespace SNMP
         public string DataSequenceBody;
         public string Imports;
         public string DeleteComments;
-
+        public string SyntaxOneWord;
+        public string SyntaxRestriction;
+        public string SyntaxTwoWord;
+        public string SyntaxSequence;
+        public string SyntaxList;
+        public string SyntaxListBody;
         public string DataTypesSize;
         public string DataTypesMin;
         public string DataTypesMax;
@@ -38,6 +43,12 @@ namespace SNMP
                          @"(?<ACCESS>\S*)\s*STATUS\s*(?<STATUS>\S*)\s*DESCRIPTION\s*\" + "\"" +
                          @"(?<DESCRIPTION>.*?" + "\")" + @".*?::=\s*{\s(?<ParrentName>\S*)" +
                          @"\s(?<OID>[0-9]*)\s}";
+            SyntaxOneWord = @"(?<Name>\w*)";
+            SyntaxRestriction = @"(?<Name>\w*)\s(\(SIZE\s\(|\()((?<RestrictionMin>\d*)\.\.(?<RestrictionMax>\d*))\)";
+            SyntaxTwoWord = @"(?<Name>\w+\s\w+)";
+            SyntaxSequence = @"SEQUENCE\sOF\s(?<Name>\w+)";
+            SyntaxList = @"(?<ParrentName>\w+)\s\{\s(?<Body>.*?)\s\}";
+            SyntaxListBody = @"(?<Name>\S+)\((?<Restriction>\d*)\)|(?<NameWithoutRestriction>\w+)";
             DataTypes = @"(?<TypeName>\S*)\s*::=\s*\[(?<Visibility>\w*)\s(?<TypeID>\d*)" +
                         @"\]\s*(?<EncodingType>\w*)\s*(?<ParrentType>\w*!\s|\w*\s*\w*)" +
                         @"\s(?<Restriction>\(.*?\)|\(.*?\)|)";
