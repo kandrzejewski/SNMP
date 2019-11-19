@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace SNMP
 {
     class Pharser: DataHub
     {
-        public void RunPharser()
+        public void RunPharser(string filename)
         {
             Pharse oPharse = new Pharse();
-            oPharse.ReadFromFile("RFC1213-MIB");           
+            oPharse.ReadFromFile(filename);           
         }
     }
 }

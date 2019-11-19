@@ -25,12 +25,13 @@ namespace SNMP
         public void PresentData(int _iWriteIteration)
         {
             WriteData(_iWriteIteration, "Name", Name);
-            //WriteData(_iWriteIteration, "Syntax", Syntax);
-            //WriteData(_iWriteIteration, "Access", Access);
-            //WriteData(_iWriteIteration, "Status", Status);
-            //WriteData(_iWriteIteration, "Description", Description);
-            //WriteData(_iWriteIteration, "ParrentName", ParrentName);
-            //WriteData(_iWriteIteration, "OID", OID);
+            WriteData(_iWriteIteration, "Syntax", "");
+            Syntax.PresentData(_iWriteIteration + 1);
+            if (!EmptyCheck(Access)) WriteData(_iWriteIteration, "Access", Access);
+            if (!EmptyCheck(Status)) WriteData(_iWriteIteration, "Status", Status);
+            if (!EmptyCheck(Description)) WriteData(_iWriteIteration, "Description", Description);
+            if (!EmptyCheck(ParrentName)) WriteData(_iWriteIteration, "ParrentName", ParrentName);
+            if (!EmptyCheck(OID)) WriteData(_iWriteIteration, "OID", OID);
             WriteData(_iWriteIteration);
         }
     }
@@ -51,27 +52,27 @@ namespace SNMP
             oSequence = new Sequence();
         }
 
-        public void PresentData()
+        public void PresentData(int _iWriteIteration)
         {
-            int _iWriteIteration = 0; 
-            WriteData(_iWriteIteration, "TypeName", TypeName);
-            WriteData(_iWriteIteration, "Visibility", oOtherData.Visibility);
-            WriteData(_iWriteIteration, "TypeID", oOtherData.TypeID);
-            WriteData(_iWriteIteration, "EncodingType", oOtherData.EncodingType);
-            WriteData(_iWriteIteration, "ParrentType", oOtherData.ParrentType);
-            WriteData(_iWriteIteration, "SizeRestriction", oSize.Size);
-            WriteData(_iWriteIteration, "RangeRestriction Min", oRange.Min);
-            WriteData(_iWriteIteration, "RangeRestriction Max", oRange.Max.ToString());
-            WriteData(_iWriteIteration, "Sequence Count", oSequence.lElements.Count);
+            if (!EmptyCheck(TypeName)) WriteData(_iWriteIteration, "TypeName", TypeName);
+            if (!EmptyCheck(oOtherData.Visibility)) WriteData(_iWriteIteration, "Visibility", oOtherData.Visibility);
+            if (!EmptyCheck(oOtherData.TypeID)) WriteData(_iWriteIteration, "TypeID", oOtherData.TypeID);
+            if (!EmptyCheck(oOtherData.EncodingType)) WriteData(_iWriteIteration, "EncodingType", oOtherData.EncodingType);
+            if (!EmptyCheck(oOtherData.ParrentType)) WriteData(_iWriteIteration, "ParrentType", oOtherData.ParrentType);
+            if (!EmptyCheck(oSize.Size)) WriteData(_iWriteIteration, "SizeRestriction", oSize.Size);
+            if (!EmptyCheck(oRange.Max))
+            {
+                WriteData(_iWriteIteration, "RangeRestriction Min", oRange.Min);
+                WriteData(_iWriteIteration, "RangeRestriction Max", oRange.Max.ToString());
+            }     
+            if (!EmptyCheck(oSequence.lElements.Count)) WriteData(_iWriteIteration, "Sequence Count", oSequence.lElements.Count);
             if (oSequence.lElements.Count > 0)
             {
                 foreach (SequenceElement _element in oSequence.lElements)
                 {
                     WriteData(_iWriteIteration + 1, _element.ElementName, _element.ElementType);
-                    WriteData(_iWriteIteration + 1);
                 }
             }
-            WriteData(_iWriteIteration);
         }
     }
 
@@ -107,7 +108,7 @@ namespace SNMP
 
     public class WriteDataClass
     {
-        public void WriteData(int _iWriteIteration, string _sName, string _sValue )
+        public void WriteData(int _iWriteIteration, string _sName, string _sValue)
         {
             WriteTreeNode(_iWriteIteration);
             Console.WriteLine("{0}: {1}", _sName, _sValue);
@@ -129,6 +130,30 @@ namespace SNMP
             {
                 Console.Write("     |");
             }
+        }
+
+        public bool EmptyCheck(string _Element)
+        {
+            if(_Element == null)
+                return true;
+            else
+                return false;
+        }
+
+        public bool EmptyCheck(int _Element)
+        {
+            if (_Element == 0)
+                return true;
+            else
+                return false;
+        }
+
+        public bool EmptyCheck(long _Element)
+        {
+            if (_Element == 0)
+                return true;
+            else
+                return false;
         }
     }
 }

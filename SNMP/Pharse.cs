@@ -321,9 +321,6 @@ namespace SNMP
                                     DataType oTempDataType = new DataType();
                                     DataHub.lData.Last().Syntax =
                                         DataHub.lDataType[PharseSyntaxDataType(sTempSyntax, oTempDataType)];
-                                    
-                                    //DataHub.lData.Last().Syntax = sTempSyntax;
-                                    //Console.WriteLine(sTempSyntax);
                                     continue;
                                 }
                             case "ACCESS":
@@ -354,8 +351,6 @@ namespace SNMP
                         }
                     }
                 }
-                //DataHub.lData.Last().PresentData(1);
-                //Console.WriteLine("");
             }
         }
 
@@ -367,86 +362,67 @@ namespace SNMP
             Regex RegexSyntaxSequence = new Regex(oRegexExpression.SyntaxSequence, oRegexExpression.Options);
             Regex RegexSyntaxList = new Regex(oRegexExpression.SyntaxList, oRegexExpression.Options);
 
-            bool ExistOnList = false;
-            int Index = 0;
+            int Index = -1;
 
             if (RegexSyntaxList.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxList.Matches(_text);
-                //Console.WriteLine(Matches[0].Groups.Count);
-                DataHub.lDataType.Add(new DataType());
-                DataHub.lDataType.Last().oOtherData.ParrentType = Matches[0].Groups[1].Value;    
-                PharseSyntaxDataTypeBody(Matches[0].Groups[2].Value);
-                Console.WriteLine("Range: {0}..{1}", DataHub.lDataType.Last().oRange.Min, DataHub.lDataType.Last().oRange.Max);
-                Console.WriteLine("---------------------------------------------");
+                _DataType.oOtherData.ParrentType = Matches[0].Groups[1].Value;    
+                PharseSyntaxDataTypeBody(Matches[0].Groups[2].Value, _DataType);
+                Index = SearchDataType(_DataType, "Object");
+                return Index;
             }
             else if (RegexSyntaxSequence.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxSequence.Matches(_text);            
                 _DataType.TypeName = Matches[0].Groups[1].Value;
-                
-                foreach(DataType _ListDataType in DataHub.lDataType)
-                {
-                    if (_DataType.TypeName == _ListDataType.TypeName)
-                    {
-                        Index = DataHub.lDataType.IndexOf(_ListDataType);
-                        ExistOnList = true;
-                    }
-
-                }
-                if (!ExistOnList)
-                {
-                    DataHub.lDataType.Add(_DataType);
-                    Index = DataHub.lDataType.IndexOf(_DataType);
-                }
+                Index = SearchDataType(_DataType, "Name");
+                return Index;
             }
             else if (RegexSyntaxTwoWord.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxTwoWord.Matches(_text);
-                DataHub.lDataType.Add(new DataType());
-                DataHub.lDataType.Last().TypeName = Matches[0].Groups[1].Value;
-                Console.WriteLine(DataHub.lDataType.Last().TypeName);
-                Console.WriteLine("---------------------------------------------");
+                _DataType.TypeName = Matches[0].Groups[1].Value;
+                Index = SearchDataType(_DataType, "Object");
+                return Index;
             }
             else if (RegexSyntaxRestriction.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxRestriction.Matches(_text);
-                DataHub.lDataType.Add(new DataType());
-                DataHub.lDataType.Last().TypeName = Matches[0].Groups[3].Value;
-                DataHub.lDataType.Last().oOtherData.ParrentType = Matches[0].Groups[3].Value;
-                DataHub.lDataType.Last().oRange.Min = Int32.Parse(Matches[0].Groups[4].Value);
-                DataHub.lDataType.Last().oRange.Max = Int64.Parse(Matches[0].Groups[5].Value);
-                Console.WriteLine(DataHub.lDataType.Last().TypeName);
-                Console.WriteLine("Range: {0}..{1}", DataHub.lDataType.Last().oRange.Min, DataHub.lDataType.Last().oRange.Max);
-                Console.WriteLine("---------------------------------------------");
+                _DataType.oOtherData.ParrentType = Matches[0].Groups[3].Value;
+                _DataType.oRange.Min = Int32.Parse(Matches[0].Groups[4].Value);
+                _DataType.oRange.Max = Int64.Parse(Matches[0].Groups[5].Value);
+                Index = SearchDataType(_DataType, "Object");
+                return Index;
             }
             else if (RegexSyntaxOneWord.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxOneWord.Matches(_text);
-                DataHub.lDataType.Add(new DataType());
-                DataHub.lDataType.Last().TypeName = Matches[0].Groups[1].Value;
-                Console.WriteLine(DataHub.lDataType.Last().TypeName);
-                Console.WriteLine("---------------------------------------------");
+                _DataType.TypeName = Matches[0].Groups[1].Value;
+                Index = SearchDataType(_DataType, "Name");
+                return Index;
             }
             return Index;
         }
 
-        private void PharseSyntaxDataTypeBody(string _text)
+        private void PharseSyntaxDataTypeBody(string _text, DataType _DataType)
         {
             Regex RegexSyntaxListBody = new Regex(oRegexExpression.SyntaxListBody, oRegexExpression.Options);
             MatchCollection Matches = RegexSyntaxListBody.Matches(_text);
+
             int iMinVal = Int32.Parse(Matches[0].Groups[2].Value);
             long iMaxVal = Int64.Parse(Matches[0].Groups[2].Value);
+
             foreach (Match _match in Matches)
             {
-                DataHub.lDataType.Last().oSequence.lElements.Add(new SequenceElement());
+                _DataType.oSequence.lElements.Add(new SequenceElement());
                 if (_match.Groups[3].Value != "")
                 {
-                    DataHub.lDataType.Last().oSequence.lElements.Last().ElementName = _match.Groups[3].Value;
+                    _DataType.oSequence.lElements.Last().ElementName = _match.Groups[3].Value;
                 }
                 else
                 {
-                    DataHub.lDataType.Last().oSequence.lElements.Last().ElementName = _match.Groups[1].Value;
+                    _DataType.oSequence.lElements.Last().ElementName = _match.Groups[1].Value;
                     if (iMinVal > Int32.Parse(_match.Groups[2].Value))
                     {
                         iMinVal = Int32.Parse(_match.Groups[2].Value);
@@ -456,10 +432,43 @@ namespace SNMP
                         iMaxVal = Int64.Parse(_match.Groups[2].Value);
                     }
                 }
-                Console.WriteLine(DataHub.lDataType.Last().oSequence.lElements.Last().ElementName);
             }
-            DataHub.lDataType.Last().oRange.Min = iMinVal;
-            DataHub.lDataType.Last().oRange.Max = iMaxVal; 
+            _DataType.oRange.Min = iMinVal;
+            _DataType.oRange.Max = iMaxVal; 
+        }
+
+        private int SearchDataType(DataType _DataType, string _NameOfSyntax)
+        {
+            bool ExistOnList = false;
+
+            foreach (DataType _ListDataType in DataHub.lDataType)
+            {
+                if (_NameOfSyntax == "Object")
+                {
+                    if (_DataType == _ListDataType)
+                    {
+                        ExistOnList = true;
+                        return DataHub.lDataType.IndexOf(_ListDataType);
+                    }
+                }
+                if (_NameOfSyntax == "Name")
+                {
+                    if (_DataType.TypeName == _ListDataType.TypeName)
+                    {
+                        ExistOnList = true;
+                        return DataHub.lDataType.IndexOf(_ListDataType);
+                    }
+                }
+            }
+            if (!ExistOnList)
+            {
+                DataHub.lDataType.Add(_DataType);
+                return DataHub.lDataType.IndexOf(_DataType);
+            }
+            else
+            {
+                return 0;
+            }  
         }
     }
 }

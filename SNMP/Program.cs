@@ -15,9 +15,10 @@ namespace SNMP
             Pharser oPharser = new Pharser();
             DataHub oDataHub = new DataHub();
 
-            oPharser.RunPharser();
+            oPharser.RunPharser("RFC1213-MIB");
             oDataHub.GenerateTree();
             oDataHub.WriteTree();
+            
             //oDataHub.WriteTypes();
         }
     }

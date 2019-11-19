@@ -47,7 +47,7 @@ namespace SNMP
         {
             foreach(DataType _DataType in lDataType)
             {
-                _DataType.PresentData();
+                _DataType.PresentData(0);
             }
         }
     }
