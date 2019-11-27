@@ -8,7 +8,6 @@ namespace SNMP
 {
     public class Program
     {
-        public static List<ObjectType> DataList;
 
         static void Main(string[] args)
         {
@@ -18,8 +17,13 @@ namespace SNMP
             oPharser.RunPharser("RFC1213-MIB");
             oDataHub.GenerateTree();
             oDataHub.WriteTree();
-            
             //oDataHub.WriteTypes();
+
+            ObjectType oOT = new ObjectType();
+            oOT = oDataHub.FindByOID();
+
+            oOT.PresentData(0);
+            
         }
     }
 }

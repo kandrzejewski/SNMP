@@ -17,7 +17,7 @@ namespace SNMP
         {
             foreach(ObjectType _Data in DataHub.lData)
             {
-                if (_Data.OID == 0)
+                if (_Data.Name == "iso")
                 {
                     oRoot.oData = _Data;
                 }

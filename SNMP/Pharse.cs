@@ -207,7 +207,6 @@ namespace SNMP
                 {
                     if (_match.Groups[_iGroupNumber].Value != "")
                     {
-                        //Console.WriteLine("Group {0}: {1}", RegexObjectIdentifier.GroupNameFromNumber(_iGroupNumber), _match.Groups[_iGroupNumber].Value);
                         switch (RegexObjectIdentifier.GroupNameFromNumber(_iGroupNumber))
                         {
                             case "Name":
@@ -228,8 +227,6 @@ namespace SNMP
                         }
                     }
                 }
-                //DataHub.lData.Last().PresentData(1);
-                //Console.WriteLine("");
             }
         }
 
@@ -253,8 +250,6 @@ namespace SNMP
                 {
                     DataHub.lData.Last().OID = Int32.Parse(_match.Groups[7].Value);
                 }
-                //DataHub.lData.Last().PresentData(1);
-                //Console.WriteLine("");
                 DataHub.lData.Add(new ObjectType());
                 if (RegexObjectIdentifierRoot.GroupNameFromNumber(5) == "Parrent3Name")
                 {
@@ -268,8 +263,6 @@ namespace SNMP
                 {
                     DataHub.lData.Last().OID = Int32.Parse(_match.Groups[6].Value);
                 }
-                //DataHub.lData.Last().PresentData(1);
-                //Console.WriteLine("");
                 DataHub.lData.Add(new ObjectType());
                 if (RegexObjectIdentifierRoot.GroupNameFromNumber(3) == "Parrent2Name")
                 {
@@ -283,15 +276,12 @@ namespace SNMP
                 {
                     DataHub.lData.Last().OID = Int32.Parse(_match.Groups[4].Value);
                 }
-                //DataHub.lData.Last().PresentData(1);
-                //Console.WriteLine("");
                 DataHub.lData.Add(new ObjectType());
                 if (RegexObjectIdentifierRoot.GroupNameFromNumber(2) == "Parrent1Name")
                 {
                     DataHub.lData.Last().Name = _match.Groups[2].Value;
+                    DataHub.lData.Last().OID = 1;
                 }
-                //DataHub.lData.Last().PresentData(1);
-                //Console.WriteLine("");
             }
         }
 
