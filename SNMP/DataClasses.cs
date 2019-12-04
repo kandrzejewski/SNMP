@@ -103,7 +103,7 @@ namespace SNMP
     public class SequenceElement
     {
         public string ElementName { get; set; }
-        public string ElementType { get; set; }
+        public DataType ElementType { get; set; }
     }
 
     public class WriteDataClass
@@ -117,6 +117,17 @@ namespace SNMP
         {
             WriteTreeNode(_iWriteIteration);
             Console.WriteLine("{0}: {1}", _sName, _sValue);
+        }
+        public void WriteData(int _iWriteIteration, string _sName, DataType _sObject)
+        {
+            WriteTreeNode(_iWriteIteration);
+            if(_sObject != null)
+            {
+                Console.WriteLine("{0}:", _sName);
+                _sObject.PresentData(_iWriteIteration + 1);
+            }
+            else
+                Console.WriteLine(_sName);
         }
         public void WriteData(int _iWriteIteration)
         {

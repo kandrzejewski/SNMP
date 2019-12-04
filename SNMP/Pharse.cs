@@ -191,7 +191,8 @@ namespace SNMP
                                 {
                                     DataHub.lDataType.Last().oSequence.lElements.Add(new SequenceElement());
                                     DataHub.lDataType.Last().oSequence.lElements.Last().ElementName = _bodyMatch.Groups[1].Value;
-                                    DataHub.lDataType.Last().oSequence.lElements.Last().ElementType = _bodyMatch.Groups[2].Value;
+                                    DataHub.lDataType.Last().oSequence.lElements.Last().ElementType = 
+                                        DataHub.lDataType[PharseSyntaxDataType(_bodyMatch.Groups[2].Value)];
                                 }
                                 continue;
                             }
@@ -313,9 +314,8 @@ namespace SNMP
                             case "SYNTAX":
                                 {
                                     string sTempSyntax = Regex.Replace(Regex.Replace(_match.Groups[_iGroupNumber].Value, @"\n", ""), @"\s{3,}", " ");
-                                    DataType oTempDataType = new DataType();
                                     DataHub.lData.Last().Syntax =
-                                        DataHub.lDataType[PharseSyntaxDataType(sTempSyntax, oTempDataType)];
+                                        DataHub.lDataType[PharseSyntaxDataType(sTempSyntax)];
                                     continue;
                                 }
                             case "ACCESS":
@@ -349,8 +349,9 @@ namespace SNMP
             }
         }
 
-        private int PharseSyntaxDataType(string _text, DataType _DataType)
+        private int PharseSyntaxDataType(string _text)
         {
+            DataType _DataType = new DataType();
             Regex RegexSyntaxOneWord = new Regex(oRegexExpression.SyntaxOneWord, oRegexExpression.Options);
             Regex RegexSyntaxRestriction = new Regex(oRegexExpression.SyntaxRestriction, oRegexExpression.Options);
             Regex RegexSyntaxTwoWord = new Regex(oRegexExpression.SyntaxTwoWord, oRegexExpression.Options);
@@ -445,8 +446,8 @@ namespace SNMP
                         && _DataType.oRange.Max == _ListDataType.oRange.Max
                         && CompareSequence(_DataType.oSequence, _ListDataType.oSequence))
                     {
-                        Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
-                        _DataType.PresentData(1);
+                        //Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
+                        //_DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
@@ -455,8 +456,8 @@ namespace SNMP
                 {
                     if (_DataType.TypeName == _ListDataType.TypeName)
                     {
-                        Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
-                        _DataType.PresentData(1);
+                        //Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
+                        //_DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
@@ -467,8 +468,8 @@ namespace SNMP
                         && _DataType.oRange.Min == _ListDataType.oRange.Min
                         && _DataType.oRange.Max == _ListDataType.oRange.Max)
                     {
-                        Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
-                        _DataType.PresentData(1);
+                        //Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
+                        //_DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
