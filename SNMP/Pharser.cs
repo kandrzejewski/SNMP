@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SNMP
 {
-    class Pharser: DataHub
+    class Pharser
     {
         public void RunPharser(string filename)
         {

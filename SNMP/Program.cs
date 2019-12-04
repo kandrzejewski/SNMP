@@ -16,13 +16,13 @@ namespace SNMP
 
             oPharser.RunPharser("RFC1213-MIB");
             oDataHub.GenerateTree();
-            oDataHub.WriteTree();
-            //oDataHub.WriteTypes();
+            //oDataHub.WriteTree();
+            oDataHub.WriteTypes();
 
-            ObjectType oOT = new ObjectType();
-            oOT = oDataHub.FindByOID();
+            //ObjectType oOT = new ObjectType();
+            //oOT = oDataHub.FindByOID();
 
-            oOT.PresentData(0);
+            //oOT.PresentData(0);
             
         }
     }

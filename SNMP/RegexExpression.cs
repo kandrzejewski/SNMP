@@ -49,11 +49,11 @@ namespace SNMP
             SyntaxSequence = @"SEQUENCE\sOF\s(?<Name>\w+)";
             SyntaxList = @"(?<ParrentName>\w+)\s\{\s(?<Body>.*?)\s\}";
             SyntaxListBody = @"(?<Name>\S+)\((?<Restriction>\d*)\)|(?<NameWithoutRestriction>\w+)";
-            DataTypes = @"(?<TypeName>\S*)\s*::=\s*\[(?<Visibility>\w*)\s(?<TypeID>\d*)" +
-                        @"\]\s*(?<EncodingType>\w*)\s*(?<ParrentType>\w*!\s|\w*\s*\w*)" +
-                        @"\s(?<Restriction>\(.*?\)|\(.*?\)|)";
-            DataTypesSize = @"\(SIZE\s\((?<Value>\d*)\)";
-            DataTypesMin = @"\((?<Min>\d*)\.\.\d*\)";
+            DataTypes = @"(?<TypeName>\S+[^(DEFINITIONS)])\s+\:\:\=(\s+\[(?<Visibility>\w+)\s" +
+                        @"(?<TypeID>\d+)\]\s+(?<EncodingType>\w+)\s+|\s+)(?<ParrentType>\w+\s\w+|" +
+                        @"\w+[^(SEQUENCE)])(\s(?<Restriction>\(.*?\)|)\s)";          
+            DataTypesSize = @"\(SIZE\s\((?<Value>\d+)\)";
+            DataTypesMin = @"\((?<Min>\d+)\.\.\d+\)";
             DataTypesMax = @"\(\d*\.\.(?<Max>\d*)\)";
             DataSequence = @"(?<TypeName>\w*)\s::=\s*SEQUENCE\s\{\s*(?<SequenceBody>.*?)\s*\}";
             DataSequenceBody = @"\s*(?<Name>\w*)\s+(?<Value>\w+\s\w+|\w+\s\(.*?\)|\w+)";

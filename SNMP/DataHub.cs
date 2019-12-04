@@ -20,6 +20,20 @@ namespace SNMP
             lData = new List<ObjectType>();
             lDataType = new List<DataType>();
             oTree = new Tree();
+            CreateBasicDataTypes();
+        }
+
+        private void CreateBasicDataTypes()
+        {
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "INTEGER";
+            lDataType.Last().oRange.Min = -2147483648;
+            lDataType.Last().oRange.Max = 2147483647;
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "OCTET STRING";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "NULL";
+
         }
 
         public void GenerateTree()
@@ -89,8 +103,12 @@ namespace SNMP
         }
         public void WriteTypes()
         {
+
+            Console.WriteLine("\n\n--------------------------------------------------------------");
+            Console.WriteLine("Znaleziono {0} typów danych.", lDataType.Count());
             foreach(DataType _DataType in lDataType)
             {
+                Console.WriteLine("--------------------------------{0}-----------------------------", lDataType.IndexOf(_DataType));
                 _DataType.PresentData(0);
             }
         }

@@ -101,57 +101,62 @@ namespace SNMP
                 DataHub.lDataType.Add(new DataType());
                 for (int _iGroupNumber = 1; _iGroupNumber < _match.Groups.Count; _iGroupNumber++)
                 {
-                    //Console.WriteLine("Group {0}: {1}", RegexObjectIdentifier.GroupNameFromNumber(_iGroupNumber), _match.Groups[_iGroupNumber].Value);
-                    switch (RegexDataType.GroupNameFromNumber(_iGroupNumber))
+                    //Console.WriteLine("Group {0}: {1}", RegexDataType.GroupNameFromNumber(_iGroupNumber), _match.Groups[_iGroupNumber].Value);
+                    if(_match.Groups[_iGroupNumber].Value != "" && _match.Groups[_iGroupNumber].Value != " ")
                     {
-                        case "TypeName":
-                            {
-                                DataHub.lDataType.Last().TypeName = _match.Groups[_iGroupNumber].Value;
-                                continue;
-                            }
-                        case "Visibility":
-                            {
-                                DataHub.lDataType.Last().oOtherData.Visibility = _match.Groups[_iGroupNumber].Value;
-                                continue;
-                            }
-                        case "TypeID":
-                            {
-                                DataHub.lDataType.Last().oOtherData.TypeID = Int32.Parse(_match.Groups[_iGroupNumber].Value);
-                                continue;
-                            }
-                        case "EncodingType":
-                            {
-                                DataHub.lDataType.Last().oOtherData.EncodingType = _match.Groups[_iGroupNumber].Value;
-                                continue;
-                            }
-                        case "ParrentType":
-                            {
-                                DataHub.lDataType.Last().oOtherData.ParrentType = _match.Groups[_iGroupNumber].Value;
-                                continue;
-                            }
-                        case "Restriction":
-                            {
-                                if (ParseRestriction(RegexRestrictionSize, _match.Groups[_iGroupNumber].Value) != "")
-                                    DataHub.lDataType.Last().oSize.Size =
-                                      Int32.Parse(ParseRestriction(RegexRestrictionSize, _match.Groups[_iGroupNumber].Value));
-                                if (ParseRestriction(RegexRestrictionMin, _match.Groups[_iGroupNumber].Value) != "")
-                                    DataHub.lDataType.Last().oRange.Min =
-                                      Int32.Parse(ParseRestriction(RegexRestrictionMin, _match.Groups[_iGroupNumber].Value));
-                                if (ParseRestriction(RegexRestrictionMax, _match.Groups[_iGroupNumber].Value) != "")
-                                    DataHub.lDataType.Last().oRange.Max =
-                                      Int64.Parse(ParseRestriction(RegexRestrictionMax, _match.Groups[_iGroupNumber].Value));
-                                continue;
-                            }
-                    }
+                        switch (RegexDataType.GroupNameFromNumber(_iGroupNumber))
+                        {
+                            case "TypeName":
+                                {
+                                    DataHub.lDataType.Last().TypeName = _match.Groups[_iGroupNumber].Value;
+                                    continue;
+                                }
+                            case "Visibility":
+                                {
+                                    DataHub.lDataType.Last().oOtherData.Visibility = _match.Groups[_iGroupNumber].Value;
+                                    continue;
+                                }
+                            case "TypeID":
+                                {
+                                    DataHub.lDataType.Last().oOtherData.TypeID = Int32.Parse(_match.Groups[_iGroupNumber].Value);
+                                    continue;
+                                }
+                            case "EncodingType":
+                                {
+                                    DataHub.lDataType.Last().oOtherData.EncodingType = _match.Groups[_iGroupNumber].Value;
+                                    continue;
+                                }
+                            case "ParrentType":
+                                {
+                                    DataHub.lDataType.Last().oOtherData.ParrentType = _match.Groups[_iGroupNumber].Value;
+                                    continue;
+                                }
+                            case "Restriction":
+                                {
+                                    if (ParseRestriction(RegexRestrictionSize, _match.Groups[_iGroupNumber].Value) != "")
+                                        DataHub.lDataType.Last().oSize.Size =
+                                          Int32.Parse(ParseRestriction(RegexRestrictionSize, _match.Groups[_iGroupNumber].Value));
+                                    if (ParseRestriction(RegexRestrictionMin, _match.Groups[_iGroupNumber].Value) != "")
+                                        DataHub.lDataType.Last().oRange.Min = 
+                                          Int32.Parse(ParseRestriction(RegexRestrictionMin, _match.Groups[_iGroupNumber].Value));
+                                    if (ParseRestriction(RegexRestrictionMax, _match.Groups[_iGroupNumber].Value) != "")
+                                        DataHub.lDataType.Last().oRange.Max =
+                                          Int64.Parse(ParseRestriction(RegexRestrictionMax, _match.Groups[_iGroupNumber].Value));
+                                    continue;
+                                }
+                        }
+                    } 
                 }
             }
         }
 
         private string ParseRestriction(Regex _RegexRestriction, string _text)
         {
-            //Console.WriteLine(_RegexRestriction.Matches(_text)[0].Groups[1].Value);
+            
             if (_RegexRestriction.IsMatch(_text))
+            {
                 return _RegexRestriction.Matches(_text)[0].Groups[1].Value;
+            }
             else
             {
                 return "";
@@ -166,7 +171,7 @@ namespace SNMP
             MatchCollection DataSequenceMatches = RegexDataSequence.Matches(_text);
             foreach (Match _match in DataSequenceMatches)
             {
-                DataHub.lDataType.Add(new DataType()); DataHub.lDataType.Add(new DataType());
+                DataHub.lDataType.Add(new DataType());
                 for (int _iGroupNumber = 1; _iGroupNumber < _match.Groups.Count; _iGroupNumber++)
                 {
                     //Console.WriteLine("Group {0}: {1}", RegexObjectIdentifier.GroupNameFromNumber(_iGroupNumber), _match.Groups[_iGroupNumber].Value);
@@ -359,21 +364,21 @@ namespace SNMP
                 MatchCollection Matches = RegexSyntaxList.Matches(_text);
                 _DataType.oOtherData.ParrentType = Matches[0].Groups[1].Value;    
                 PharseSyntaxDataTypeBody(Matches[0].Groups[2].Value, _DataType);
-                Index = SearchDataType(_DataType, "Object");
+                Index = SearchDataType(_DataType, "List");
                 return Index;
             }
             else if (RegexSyntaxSequence.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxSequence.Matches(_text);            
                 _DataType.TypeName = Matches[0].Groups[1].Value;
-                Index = SearchDataType(_DataType, "Name");
+                Index = SearchDataType(_DataType, "OnlyName");
                 return Index;
             }
             else if (RegexSyntaxTwoWord.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxTwoWord.Matches(_text);
                 _DataType.TypeName = Matches[0].Groups[1].Value;
-                Index = SearchDataType(_DataType, "Object");
+                Index = SearchDataType(_DataType, "OnlyName");
                 return Index;
             }
             else if (RegexSyntaxRestriction.IsMatch(_text))
@@ -382,14 +387,14 @@ namespace SNMP
                 _DataType.oOtherData.ParrentType = Matches[0].Groups[3].Value;
                 _DataType.oRange.Min = Int32.Parse(Matches[0].Groups[4].Value);
                 _DataType.oRange.Max = Int64.Parse(Matches[0].Groups[5].Value);
-                Index = SearchDataType(_DataType, "Object");
+                Index = SearchDataType(_DataType, "Restrictions");
                 return Index;
             }
             else if (RegexSyntaxOneWord.IsMatch(_text))
             {
                 MatchCollection Matches = RegexSyntaxOneWord.Matches(_text);
                 _DataType.TypeName = Matches[0].Groups[1].Value;
-                Index = SearchDataType(_DataType, "Name");
+                Index = SearchDataType(_DataType, "OnlyName");
                 return Index;
             }
             return Index;
@@ -433,18 +438,37 @@ namespace SNMP
 
             foreach (DataType _ListDataType in DataHub.lDataType)
             {
-                if (_NameOfSyntax == "Object")
+                if (_NameOfSyntax == "List")
                 {
-                    if (_DataType == _ListDataType)
+                    if (_DataType.oOtherData.ParrentType == _ListDataType.oOtherData.ParrentType
+                        && _DataType.oRange.Min == _ListDataType.oRange.Min
+                        && _DataType.oRange.Max == _ListDataType.oRange.Max
+                        && CompareSequence(_DataType.oSequence, _ListDataType.oSequence))
                     {
+                        Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
+                        _DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
                 }
-                if (_NameOfSyntax == "Name")
+                if (_NameOfSyntax == "OnlyName")
                 {
                     if (_DataType.TypeName == _ListDataType.TypeName)
                     {
+                        Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
+                        _DataType.PresentData(1);
+                        ExistOnList = true;
+                        return DataHub.lDataType.IndexOf(_ListDataType);
+                    }
+                }
+                if (_NameOfSyntax == "Restrictions")
+                {
+                    if (_DataType.oOtherData.ParrentType == _ListDataType.oOtherData.ParrentType
+                        && _DataType.oRange.Min == _ListDataType.oRange.Min
+                        && _DataType.oRange.Max == _ListDataType.oRange.Max)
+                    {
+                        Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
+                        _DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
@@ -459,6 +483,18 @@ namespace SNMP
             {
                 return 0;
             }  
+        }
+        private bool CompareSequence(Sequence _oSequence1, Sequence _oSequence2)
+        {
+
+            for(int i=0; i < _oSequence1.lElements.Count(); i++)
+            {
+                    if (_oSequence1.lElements[i].ElementName != _oSequence2.lElements[i].ElementName)
+                        return false;
+                    if (_oSequence1.lElements[i].ElementType != _oSequence2.lElements[i].ElementType)
+                        return false;
+            }
+            return true;
         }
     }
 }
