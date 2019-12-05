@@ -63,7 +63,7 @@ namespace SNMP
         private void PharseImports(string _text)
         {
             Regex RegexImports = new Regex(oRegexExpression.Imports, oRegexExpression.Options);
-
+  
             MatchCollection ImportsMatches = RegexImports.Matches(_text);
             foreach (Match _match in ImportsMatches)
             {
@@ -84,7 +84,6 @@ namespace SNMP
                     }
                 }
                 //DataHub.lData.Last().PresentData(1);
-                //Console.WriteLine("");
             }
         }
 

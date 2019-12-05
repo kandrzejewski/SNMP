@@ -24,15 +24,25 @@ namespace SNMP
 
         public void PresentData(int _iWriteIteration)
         {
-            WriteData(_iWriteIteration, "Name", Name);
-            WriteData(_iWriteIteration, "Syntax", "");
+            WriteData(_iWriteIteration, ConsoleColor.Cyan, ConsoleColor.DarkMagenta, "Name", Name, false);
+            WriteData(_iWriteIteration, ConsoleColor.Cyan, ConsoleColor.DarkMagenta, "Syntax", "", false);
             Syntax.PresentData(_iWriteIteration + 1);
-            if (!EmptyCheck(Access)) WriteData(_iWriteIteration, "Access", Access);
-            if (!EmptyCheck(Status)) WriteData(_iWriteIteration, "Status", Status);
-            if (!EmptyCheck(Description)) WriteData(_iWriteIteration, "Description", Description);
-            if (!EmptyCheck(ParrentName)) WriteData(_iWriteIteration, "ParrentName", ParrentName);
-            if (!EmptyCheck(OID)) WriteData(_iWriteIteration, "OID", OID);
-            WriteData(_iWriteIteration);
+            if (!EmptyCheck(Access)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
+                ConsoleColor.DarkMagenta, "Access", Access, false);
+            if (!EmptyCheck(Status)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
+                ConsoleColor.DarkMagenta, "Status", Status, false);
+            if (!EmptyCheck(Description))
+                if (Description.Count() < 55)
+                    WriteData(_iWriteIteration, ConsoleColor.Cyan,
+                    ConsoleColor.DarkMagenta, "Description", Description, false);
+                else
+                    WriteData(_iWriteIteration, ConsoleColor.Cyan,
+                    ConsoleColor.DarkMagenta, "Description", Description.Substring(0, 55)+"...", false);
+            if (!EmptyCheck(ParrentName)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
+                ConsoleColor.DarkMagenta, "ParrentName", ParrentName, false);
+            if (!EmptyCheck(OID)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
+                ConsoleColor.Yellow, "OID", OID, false);
+            WriteData(_iWriteIteration, true);
         }
     }
 
@@ -54,23 +64,42 @@ namespace SNMP
 
         public void PresentData(int _iWriteIteration)
         {
-            if (!EmptyCheck(TypeName)) WriteData(_iWriteIteration, "TypeName", TypeName);
-            if (!EmptyCheck(oOtherData.Visibility)) WriteData(_iWriteIteration, "Visibility", oOtherData.Visibility);
-            if (!EmptyCheck(oOtherData.TypeID)) WriteData(_iWriteIteration, "TypeID", oOtherData.TypeID);
-            if (!EmptyCheck(oOtherData.EncodingType)) WriteData(_iWriteIteration, "EncodingType", oOtherData.EncodingType);
-            if (!EmptyCheck(oOtherData.ParrentType)) WriteData(_iWriteIteration, "ParrentType", oOtherData.ParrentType);
-            if (!EmptyCheck(oSize.Size)) WriteData(_iWriteIteration, "SizeRestriction", oSize.Size);
+            if (!EmptyCheck(TypeName))
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                ConsoleColor.Magenta, "TypeName", TypeName, false);
+            if (!EmptyCheck(oOtherData.Visibility))
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                ConsoleColor.Magenta, "Visibility", oOtherData.Visibility, false);
+            if (!EmptyCheck(oOtherData.TypeID))
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                ConsoleColor.Magenta, "TypeID", oOtherData.TypeID, false);
+            if (!EmptyCheck(oOtherData.EncodingType))
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                ConsoleColor.Magenta, "EncodingType", oOtherData.EncodingType, false);
+            if (!EmptyCheck(oOtherData.ParrentType))
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                ConsoleColor.Magenta, "ParrentType", oOtherData.ParrentType, false);
+            if (!EmptyCheck(oSize.Size))
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                ConsoleColor.Yellow, "SizeRestriction", oSize.Size, true);
             if (!EmptyCheck(oRange.Max))
             {
-                WriteData(_iWriteIteration, "RangeRestriction Min", oRange.Min);
-                WriteData(_iWriteIteration, "RangeRestriction Max", oRange.Max.ToString());
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                    ConsoleColor.Yellow, "RangeRestriction Min", oRange.Min, false);
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                    ConsoleColor.Yellow, "RangeRestriction Max", oRange.Max.ToString(), false);
             }     
-            if (!EmptyCheck(oSequence.lElements.Count)) WriteData(_iWriteIteration, "Sequence Count", oSequence.lElements.Count);
+            if (!EmptyCheck(oSequence.lElements.Count))
+                WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+                ConsoleColor.Yellow, "Sequence Count", oSequence.lElements.Count, true);
             if (oSequence.lElements.Count > 0)
             {
                 foreach (SequenceElement _element in oSequence.lElements)
                 {
-                    WriteData(_iWriteIteration + 1, _element.ElementName, _element.ElementType);
+                    if(_element != oSequence.lElements.Last())
+                        WriteData(_iWriteIteration + 1, ConsoleColor.DarkGreen, _element.ElementName, _element.ElementType, false);
+                    else
+                        WriteData(_iWriteIteration + 1, ConsoleColor.DarkGreen, _element.ElementName, _element.ElementType, true);
                 }
             }
         }
@@ -108,39 +137,63 @@ namespace SNMP
 
     public class WriteDataClass
     {
-        public void WriteData(int _iWriteIteration, string _sName, string _sValue)
+        public static int start;
+        public void WriteData(int _iWriteIteration, ConsoleColor _color,
+            ConsoleColor _color2, string _sName, string _sValue, bool _last)
         {
-            WriteTreeNode(_iWriteIteration);
-            Console.WriteLine("{0}: {1}", _sName, _sValue);
+            WriteTreeNode(_iWriteIteration, _last);
+            Console.ForegroundColor = _color;
+            Console.Write("{0}:", _sName);
+            Console.ForegroundColor = _color2;
+            Console.WriteLine(" {0}", _sValue);
         }
-        public void WriteData(int _iWriteIteration, string _sName, int _sValue)
+        public void WriteData(int _iWriteIteration, ConsoleColor _color,
+            ConsoleColor _color2, string _sName, int _sValue, bool _last)
         {
-            WriteTreeNode(_iWriteIteration);
-            Console.WriteLine("{0}: {1}", _sName, _sValue);
+            WriteTreeNode(_iWriteIteration, _last);
+            Console.ForegroundColor = _color;
+            Console.Write("{0}:", _sName);
+            Console.ForegroundColor = _color2;
+            Console.WriteLine(" {0}", _sValue);
         }
-        public void WriteData(int _iWriteIteration, string _sName, DataType _sObject)
+        public void WriteData(int _iWriteIteration, ConsoleColor _color,
+            string _sName, DataType _sObject, bool _last)
         {
-            WriteTreeNode(_iWriteIteration);
-            if(_sObject != null)
+            WriteTreeNode(_iWriteIteration, _last);
+            if (_sObject != null)
             {
+                Console.ForegroundColor = _color;
                 Console.WriteLine("{0}:", _sName);
                 _sObject.PresentData(_iWriteIteration + 1);
             }
             else
+            {
+                Console.ForegroundColor = _color;
                 Console.WriteLine(_sName);
+            }
         }
-        public void WriteData(int _iWriteIteration)
+        public void WriteData(int _iWriteIteration, bool _last)
         {
-            WriteTreeNode(_iWriteIteration);
-            Console.WriteLine("------");
+            WriteTreeNode(_iWriteIteration, _last);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("─────────────");
         }
 
-        private void WriteTreeNode(int _iWriteIteration)
+        private void WriteTreeNode(int _iWriteIteration, bool _last)
         {
             for (int i = 0; i < _iWriteIteration; i++)
             {
-                Console.Write("     |");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                if (i == _iWriteIteration-1)
+                    if(_last)
+                        Console.Write(" └─");
+                    else
+                        Console.Write(" ├─");
+                else
+                    Console.Write(" │   ");
+
             }
+            
         }
 
         public bool EmptyCheck(string _Element)

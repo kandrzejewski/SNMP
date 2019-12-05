@@ -10,7 +10,6 @@ namespace SNMP
     class DataHub
     {
         public static List<ObjectType> lData;
-
         public static List<DataType> lDataType;
         public Tree oTree;
         private int iWriteIteration = 0;
@@ -103,11 +102,12 @@ namespace SNMP
         }
         public void WriteTypes()
         {
-
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("\n\n--------------------------------------------------------------");
-            Console.WriteLine("Znaleziono {0} typów danych.", lDataType.Count());
+            Console.WriteLine("                 Znaleziono {0} typów danych.                 ", lDataType.Count());
             foreach(DataType _DataType in lDataType)
             {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine("--------------------------------{0}-----------------------------", lDataType.IndexOf(_DataType));
                 _DataType.PresentData(0);
             }
