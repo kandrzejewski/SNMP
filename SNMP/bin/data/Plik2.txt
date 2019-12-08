@@ -1,7 +1,0 @@
-{Person: 3}
-e-mail: cdf@vege.za {3}
-Country - RPA {4}
-title: Viola {1}
-name: Adam Turkot {2}
-parrent: {2}
-openfile - "Plik4"

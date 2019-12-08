@@ -12,6 +12,8 @@ namespace SNMP
         public static List<ObjectType> lData;
         public static List<DataType> lDataType;
         public Tree oTree;
+
+        public string sOID;
         private int iWriteIteration = 0;
 
         public DataHub()
@@ -28,11 +30,20 @@ namespace SNMP
             lDataType.Last().TypeName = "INTEGER";
             lDataType.Last().oRange.Min = -2147483648;
             lDataType.Last().oRange.Max = 2147483647;
+            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
+            lDataType.Last().oOtherData.TypeID = 2;
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "OCTET STRING";
+            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
+            lDataType.Last().oOtherData.TypeID = 4;
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "NULL";
-
+            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
+            lDataType.Last().oOtherData.TypeID = 5;
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "OBJECT IDENTIFIER";
+            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
+            lDataType.Last().oOtherData.TypeID = 6;
         }
 
         public void GenerateTree()
@@ -42,29 +53,37 @@ namespace SNMP
 
         public ObjectType FindByOID()
         {
-            string sOID;
-            Console.Write("Podaj OID poszukiwanego obiektu: ");
+            Console.Write("Enter OID of Object: ");
             sOID = Console.ReadLine();
-
+            if (sOID == "q")
+                return null;
             Regex RegexOID = new Regex(@"(?<OID>\d+)", RegexOptions.Singleline | RegexOptions.Compiled);
             MatchCollection Matches = RegexOID.Matches(sOID);
+            ObjectType _TempObjectType = new ObjectType();
 
             if (Int32.Parse(Matches[0].Groups[1].Value) == oTree.oRoot.oData.OID)
             {
-                ObjectType _TempObjectType = FindNext(oTree.oRoot.Childrens, Matches[0].NextMatch());
+                if (Matches[0].NextMatch().Success)
+                    _TempObjectType = FindNext(oTree.oRoot.Childrens, Matches[0].NextMatch());
+                else
+                    _TempObjectType = oTree.oRoot.oData;
                 if (_TempObjectType != null)
                 {
                     return _TempObjectType;
                 }           
                 else
                 {
-                    Console.WriteLine("Objekt o padoanym OID nie istnieje!. Spróbuj ponownie.\n");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nObject with OID {0} doesn't exist!. Try again...\n", sOID);
+                    Console.ForegroundColor = ConsoleColor.Gray;
                     return FindByOID();
                 }
             }
             else
             {
-                Console.WriteLine("Objekt o padoanym OID nie istnieje!. Spróbuj ponownie.\n");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nObject with OID {0} doesn't exist!. Try again...\n", sOID);
+                Console.ForegroundColor = ConsoleColor.Gray;
                 return FindByOID();
             }
         }

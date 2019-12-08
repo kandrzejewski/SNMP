@@ -1,6 +1,0 @@
-{Person: 5}
-e-mail: hhrt@ttty.pl {3}
-Country - Poland {4}
-title: Teleskop {1}
-name:  Krzysztof Kozłowski {2}
-parrent: {2}

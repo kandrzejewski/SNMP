@@ -60,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Encoder.cs" />
+    <Compile Include="EncodingValidator.cs" />
     <Compile Include="RegexExpression.cs" />
     <Compile Include="TreeLeaf.cs" />
     <Compile Include="DataClasses.cs" />

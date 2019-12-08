@@ -1,6 +1,0 @@
-{Person: 6}
-e-mail: tjyt@gtgt.pt {3}
-Country - Portugal {4}
-title: cośtam {1}
-name: Portugalczyk Portugalczyk {2}
-parrent: {5}

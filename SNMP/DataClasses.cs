@@ -20,13 +20,15 @@ namespace SNMP
         public ObjectType()
         {
             Syntax = new DataType();
+            Syntax = null;
         }
 
         public void PresentData(int _iWriteIteration)
         {
             WriteData(_iWriteIteration, ConsoleColor.Cyan, ConsoleColor.DarkMagenta, "Name", Name, false);
             WriteData(_iWriteIteration, ConsoleColor.Cyan, ConsoleColor.DarkMagenta, "Syntax", "", false);
-            Syntax.PresentData(_iWriteIteration + 1);
+            if(Syntax != null)
+                Syntax.PresentData(_iWriteIteration + 1);
             if (!EmptyCheck(Access)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
                 ConsoleColor.DarkMagenta, "Access", Access, false);
             if (!EmptyCheck(Status)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
