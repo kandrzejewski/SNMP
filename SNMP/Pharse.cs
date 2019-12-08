@@ -30,7 +30,6 @@ namespace SNMP
                         sPreparedFile = sPreparedFile + line.Remove(line.IndexOf('-')) + "\n";
                     }
                 }
-                //Console.WriteLine(sPreparedFile);
                 Console.WriteLine("Odczytano plik {0}!", sFileName);
                 Console.WriteLine("------------------------");
                 PharseFile(sPreparedFile);
@@ -83,7 +82,6 @@ namespace SNMP
                         }
                     }
                 }
-                //DataHub.lData.Last().PresentData(1);
             }
         }
 
@@ -171,6 +169,7 @@ namespace SNMP
             foreach (Match _match in DataSequenceMatches)
             {
                 DataHub.lDataType.Add(new DataType());
+                DataHub.lDataType.Last().oOtherData.ParrentType = "SEQUENCE";
                 for (int _iGroupNumber = 1; _iGroupNumber < _match.Groups.Count; _iGroupNumber++)
                 {
                     //Console.WriteLine("Group {0}: {1}", RegexObjectIdentifier.GroupNameFromNumber(_iGroupNumber), _match.Groups[_iGroupNumber].Value);
@@ -445,8 +444,6 @@ namespace SNMP
                         && _DataType.oRange.Max == _ListDataType.oRange.Max
                         && CompareSequence(_DataType.oSequence, _ListDataType.oSequence))
                     {
-                        //Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
-                        //_DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
@@ -455,8 +452,6 @@ namespace SNMP
                 {
                     if (_DataType.TypeName == _ListDataType.TypeName)
                     {
-                        //Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
-                        //_DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
@@ -467,8 +462,6 @@ namespace SNMP
                         && _DataType.oRange.Min == _ListDataType.oRange.Min
                         && _DataType.oRange.Max == _ListDataType.oRange.Max)
                     {
-                        //Console.WriteLine("Obiekt {0} istnieje na liście na pozycji {1}", _DataType.TypeName, DataHub.lDataType.IndexOf(_ListDataType));
-                        //_DataType.PresentData(1);
                         ExistOnList = true;
                         return DataHub.lDataType.IndexOf(_ListDataType);
                     }
@@ -484,6 +477,7 @@ namespace SNMP
                 return 0;
             }  
         }
+
         private bool CompareSequence(Sequence _oSequence1, Sequence _oSequence2)
         {
 

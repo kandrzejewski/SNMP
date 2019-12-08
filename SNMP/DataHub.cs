@@ -21,10 +21,10 @@ namespace SNMP
             lData = new List<ObjectType>();
             lDataType = new List<DataType>();
             oTree = new Tree();
-            CreateBasicDataTypes();
+            AddBasicDataTypes();
         }
 
-        private void CreateBasicDataTypes()
+        private void AddBasicDataTypes()
         {
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "INTEGER";
@@ -44,6 +44,12 @@ namespace SNMP
             lDataType.Last().TypeName = "OBJECT IDENTIFIER";
             lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
             lDataType.Last().oOtherData.TypeID = 6;
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "SEQUENCE";
+            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
+            lDataType.Last().oOtherData.TypeID = 16;
+
+
         }
 
         public void GenerateTree()
@@ -61,16 +67,16 @@ namespace SNMP
             MatchCollection Matches = RegexOID.Matches(sOID);
             ObjectType _TempObjectType = new ObjectType();
 
-            if (Int32.Parse(Matches[0].Groups[1].Value) == oTree.oRoot.oData.OID)
+            if (Int32.Parse(Matches[0].Groups[1].Value) == oTree.oRoot.oObjectType.OID)
             {
                 if (Matches[0].NextMatch().Success)
-                    _TempObjectType = FindNext(oTree.oRoot.Childrens, Matches[0].NextMatch());
+                    _TempObjectType = FindNextOID(oTree.oRoot.Childrens, Matches[0].NextMatch());
                 else
-                    _TempObjectType = oTree.oRoot.oData;
+                    _TempObjectType = oTree.oRoot.oObjectType;
                 if (_TempObjectType != null)
                 {
                     return _TempObjectType;
-                }           
+                }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -88,38 +94,39 @@ namespace SNMP
             }
         }
 
-        private ObjectType FindNext(List<TreeLeaf> _LeafList, Match _match)
+        private ObjectType FindNextOID(List<TreeLeaf> _LeafList, Match _match)
         {
             foreach (TreeLeaf _Leaf in _LeafList)
             {
-                if (_Leaf.oData.OID == Int32.Parse(_match.Groups[1].Value))
+                if (_Leaf.oObjectType.OID == Int32.Parse(_match.Groups[1].Value))
                 {
                     if (_match.NextMatch().Success)
-                        return FindNext(_Leaf.Childrens, _match.NextMatch());
+                        return FindNextOID(_Leaf.Childrens, _match.NextMatch());
                     else
-                        return _Leaf.oData;
+                        return _Leaf.oObjectType;
                 }
             }
             return null;
         }
 
-        public void WriteTree()
+        public void PrintObjectTree()
         {
-            oTree.oRoot.oData.PresentData(iWriteIteration);
-            WriteChildren(oTree.oRoot.Childrens);
+            oTree.oRoot.oObjectType.PresentData(iWriteIteration);
+            PrintObjectChildrens(oTree.oRoot.Childrens);
         }
 
-        private void WriteChildren(List<TreeLeaf> _LeafList)
+        private void PrintObjectChildrens(List<TreeLeaf> _LeafList)
         {
             iWriteIteration++;
             foreach (TreeLeaf _Leaf in _LeafList)
             {
-                _Leaf.oData.PresentData(iWriteIteration);
-                WriteChildren(_Leaf.Childrens);
+                _Leaf.oObjectType.PresentData(iWriteIteration);
+                PrintObjectChildrens(_Leaf.Childrens);
                 iWriteIteration--;
             }
         }
-        public void WriteTypes()
+
+        public void PrintDataTypes()
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("\n\n--------------------------------------------------------------");
@@ -130,6 +137,18 @@ namespace SNMP
                 Console.WriteLine("--------------------------------{0}-----------------------------", lDataType.IndexOf(_DataType));
                 _DataType.PresentData(0);
             }
+        }
+
+        public DataType FindDataTypeByName(string _sName)
+        {
+            foreach (DataType _DataType in lDataType)
+            {
+                if (_DataType.TypeName == _sName)
+                {
+                    return _DataType;
+                }
+            }
+            return null;
         }
     }
 }

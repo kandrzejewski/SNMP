@@ -8,24 +8,60 @@ using System.Text.RegularExpressions;
 
 namespace SNMP
 {
-    class EncodingValidator
+    class EncodingValidator : DataHub
     {
-        public static string Value;
-        public bool Validate(string _title, DataType _oDataType)
+        private EncoderData oResult = new EncoderData();
+        private List<EncoderData> oResultList = new List<EncoderData>();
+
+        public List<EncoderData> ValidateAnyDataType()
+        {
+            oResultList.Add(new EncoderData());
+            Console.Write("Enter a name of Type: ");
+            oResultList.Last()._oDataType = FindDataTypeByName(Console.ReadLine());
+            if (oResultList.Last()._oDataType != null)
+            {
+                oResultList[oResultList.IndexOf(oResultList.Last())] = Validate("\n\nFound Data Type " + 
+                    oResultList.Last()._oDataType.TypeName, oResultList.Last()._oDataType, 0);
+                oResultList.Last().PresentData();
+            }
+            else
+            {
+                Console.WriteLine("Entered Data Type not found!");
+                oResultList.Last().bCanEncode = false;
+            }
+
+            return oResultList;
+        }
+
+        public EncoderData Validate(string _title, DataType _oDataType, byte iteration)
         {
             if (_oDataType != null)
             {
+                if (iteration == 0)
+                {
+                    oResult.ValueToEncode.Add("");
+                    oResult._oDataType = _oDataType;
+                }
                 Console.WriteLine(_title);
                 Console.WriteLine("────────────────────────────────────────────────────");
                 _oDataType.PresentData(1);
                 Console.WriteLine("────────────────────────────────────────────────────");
                 Console.ForegroundColor = ConsoleColor.Gray;
                 if (_oDataType.TypeName == "INTEGER" || _oDataType.oOtherData.ParrentType == "INTEGER")
-                    return IntegerValidation(_oDataType);
+                {
+                    oResult.bCanEncode = IntegerValidation(_oDataType, iteration);
+                    return oResult;
+                }
                 else if (_oDataType.TypeName == "OCTET STRING" || _oDataType.oOtherData.ParrentType == "OCTET STRING")
-                    return OctetStringValidation(_oDataType);
+                {
+                    oResult.bCanEncode = OctetStringValidation(_oDataType, iteration);
+                    return oResult;
+                }
                 else if (_oDataType.TypeName == "OBJECT IDENTIFIER" || _oDataType.oOtherData.ParrentType == "OBJECT IDENTIFIER")
-                    return ObjectIdentifierValidation(_oDataType);
+                {
+                    oResult.bCanEncode = ObjectIdentifierValidation(_oDataType, iteration);
+                    return oResult;
+                }
                 else if (_oDataType.oSequence.lElements.Count() == 0)
                 {
                     if (!_oDataType.EmptyCheck(_oDataType.oOtherData.ParrentType))
@@ -33,41 +69,58 @@ namespace SNMP
                         foreach (DataType _DataType in DataHub.lDataType)
                         {
                             if (_oDataType.oOtherData.ParrentType == _DataType.TypeName)
-                                if (Validate("Parrent of Data Type of Object " + _oDataType.TypeName, _DataType))
+                                if (Validate("Parrent of Data Type of Object " + _oDataType.TypeName, _DataType, iteration).bCanEncode)
                                 {
                                     if (_DataType.TypeName == "INTEGER" || _DataType.oOtherData.ParrentType == "INTEGER")
-                                        return IntegerValidation(_oDataType, Int64.Parse(Value));
+                                    {
+                                        oResult.bCanEncode = IntegerValidation(_oDataType, Int64.Parse(oResult.ValueToEncode[iteration]));
+                                        return oResult;
+                                    }
                                     if (_DataType.TypeName == "OCTET STRING" || _DataType.oOtherData.ParrentType == "OCTET STRING")
-                                        return OctetStringValidation(_oDataType, Value);
-                                    else if (_DataType.TypeName == "OBJECT IDENTIFIER" || _DataType.oOtherData.ParrentType == "OBJECT IDENTIFIER")
-                                        return ObjectIdentifierValidation(_oDataType, Value);
+                                    {
+                                        oResult.bCanEncode = OctetStringValidation(_oDataType, oResult.ValueToEncode[iteration]);
+                                        return oResult;
+                                    }
+                                    if (_DataType.TypeName == "OBJECT IDENTIFIER" || _DataType.oOtherData.ParrentType == "OBJECT IDENTIFIER") {
+                                        oResult.bCanEncode = ObjectIdentifierValidation(_oDataType, oResult.ValueToEncode[iteration]);
+                                        return oResult;
+                                    }
                                 }
                         }
                     }
                 }
                 else if (_oDataType.oSequence.lElements.Count > 0)
                 {
-                    foreach(SequenceElement _SequenceElement in _oDataType.oSequence.lElements)
+                    foreach (SequenceElement _SequenceElement in _oDataType.oSequence.lElements)
                     {
                         if (_SequenceElement.ElementType != null)
-                            if (!Validate("\n\n" + _oDataType.oSequence.lElements.IndexOf(_SequenceElement) +
-                                " element of Sequence:", _SequenceElement.ElementType))
-                                return false;
+                            oResult.ValueToEncode.Add("");
+                            iteration++;
+                            if (!Validate("\n\n" + (_oDataType.oSequence.lElements.IndexOf(_SequenceElement) + 1) 
+                                + " element of Sequence:", _SequenceElement.ElementType, iteration).bCanEncode)
+                            {
+                                oResult.bCanEncode = false;
+                                return oResult;
+                            }
+                                
                     }
-                    return true;
+                    oResult.bCanEncode = true;
+                    return oResult;
                 }
                 Console.WriteLine("\n\nParameters of Data Type is not recognized!");
-                return false;
+                oResult.bCanEncode = false;
+                return oResult;
             }
             else
             {
                 Console.WriteLine("\n\nObject doesn't have a Data Type!");
-                return false;
+                oResult.bCanEncode = false;
+                return oResult;
             }
 
         }      
 
-        private bool IntegerValidation(DataType _oDataType)
+        private bool IntegerValidation(DataType _oDataType, byte number)
         {
             long iValueToEncode;
             bool bConversionStatus;
@@ -78,8 +131,8 @@ namespace SNMP
                 Console.WriteLine("Enter a Value:\n({0}\nRange {1}..{2})\n", _oDataType.oOtherData.ParrentType,
                     _oDataType.oRange.Min, _oDataType.oRange.Max);
             Console.Write("=>");
-            Value = Console.ReadLine();
-            bConversionStatus = Int64.TryParse(Value, out iValueToEncode);
+            oResult.ValueToEncode[number] = Console.ReadLine();
+            bConversionStatus = Int64.TryParse(oResult.ValueToEncode[number], out iValueToEncode);
 
             if (bConversionStatus)
             {
@@ -103,6 +156,7 @@ namespace SNMP
             }
             return true;
         }
+
         private bool IntegerValidation(DataType _oDataType, long _Value)
         {
             if (_Value < _oDataType.oRange.Min)
@@ -120,7 +174,7 @@ namespace SNMP
             return true;
         }
 
-        private bool OctetStringValidation(DataType _oDataType)
+        private bool OctetStringValidation(DataType _oDataType, byte number)
         {   
             if(_oDataType.oSize.Size !=0)
                 Console.WriteLine("Enter a Value\n({0}\nRange 0..{1} bytes)\n", _oDataType.TypeName,
@@ -129,15 +183,15 @@ namespace SNMP
                 Console.WriteLine("Enter a Value:\n({0})\n", _oDataType.TypeName);
 
             Console.Write("=>");
-            Value = Console.ReadLine();
+            oResult.ValueToEncode[number] = Console.ReadLine();
             if (!_oDataType.EmptyCheck(_oDataType.oSize.Size))
-                if (System.Text.ASCIIEncoding.ASCII.GetByteCount(Value) > _oDataType.oSize.Size)
+                if (System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[number]) > _oDataType.oSize.Size)
                 {
                     Console.WriteLine("\nPodana liczba jest poza zakresem. Maksymalna wielkość to {0} bit!", _oDataType.oSize.Size);
                     return false;
                 }
             if (!_oDataType.EmptyCheck(_oDataType.oRange.Max))
-                if (System.Text.ASCIIEncoding.ASCII.GetByteCount(Value) > _oDataType.oRange.Max / 8)
+                if (System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[number]) > _oDataType.oRange.Max / 8)
                 {
                     Console.WriteLine("\nPodana liczba jest poza zakresem. Maksymalna wielkość to {0} bit!", (_oDataType.oRange.Max / 8) + 1);
                     return false;
@@ -162,13 +216,13 @@ namespace SNMP
                 return true;
         }
 
-        private bool ObjectIdentifierValidation(DataType _oDataType)
+        private bool ObjectIdentifierValidation(DataType _oDataType, byte number)
         {
             Console.WriteLine("Enter a Value\n(Range 0..N\nFormat: OID1 OID2 ... OIDn)");
             Console.Write("=>");
-            Value = Console.ReadLine();
+            oResult.ValueToEncode[number] = Console.ReadLine();
             Regex RegexOID = new Regex(@"\S+", RegexOptions.Singleline | RegexOptions.Compiled);
-            MatchCollection OIDS = RegexOID.Matches(Value);
+            MatchCollection OIDS = RegexOID.Matches(oResult.ValueToEncode[number]);
             int _iOID;
             foreach (Match _match in OIDS)
             {

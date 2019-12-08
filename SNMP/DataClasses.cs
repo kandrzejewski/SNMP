@@ -7,10 +7,10 @@ using System.Text.RegularExpressions;
 
 namespace SNMP
 {
-    public class ObjectType: WriteDataClass
+    public class ObjectType : WriteDataClass
     {
         public string Name { get; set; }
-        public DataType Syntax {get; set;}
+        public DataType Syntax { get; set; }
         public string Access { get; set; }
         public string Status { get; set; }
         public string Description { get; set; }
@@ -27,7 +27,7 @@ namespace SNMP
         {
             WriteData(_iWriteIteration, ConsoleColor.Cyan, ConsoleColor.DarkMagenta, "Name", Name, false);
             WriteData(_iWriteIteration, ConsoleColor.Cyan, ConsoleColor.DarkMagenta, "Syntax", "", false);
-            if(Syntax != null)
+            if (Syntax != null)
                 Syntax.PresentData(_iWriteIteration + 1);
             if (!EmptyCheck(Access)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
                 ConsoleColor.DarkMagenta, "Access", Access, false);
@@ -39,7 +39,7 @@ namespace SNMP
                     ConsoleColor.DarkMagenta, "Description", Description, false);
                 else
                     WriteData(_iWriteIteration, ConsoleColor.Cyan,
-                    ConsoleColor.DarkMagenta, "Description", Description.Substring(0, 55)+"...", false);
+                    ConsoleColor.DarkMagenta, "Description", Description.Substring(0, 55) + "...", false);
             if (!EmptyCheck(ParrentName)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
                 ConsoleColor.DarkMagenta, "ParrentName", ParrentName, false);
             if (!EmptyCheck(OID)) WriteData(_iWriteIteration, ConsoleColor.Cyan,
@@ -48,7 +48,7 @@ namespace SNMP
         }
     }
 
-    public class DataType: WriteDataClass
+    public class DataType : WriteDataClass
     {
         public string TypeName { get; set; }
         public SizeRestriction oSize;
@@ -90,7 +90,7 @@ namespace SNMP
                     ConsoleColor.Yellow, "RangeRestriction Min", oRange.Min, false);
                 WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
                     ConsoleColor.Yellow, "RangeRestriction Max", oRange.Max.ToString(), false);
-            }     
+            }
             if (!EmptyCheck(oSequence.lElements.Count))
                 WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
                 ConsoleColor.Yellow, "Sequence Count", oSequence.lElements.Count, true);
@@ -98,12 +98,13 @@ namespace SNMP
             {
                 foreach (SequenceElement _element in oSequence.lElements)
                 {
-                    if(_element != oSequence.lElements.Last())
+                    if (_element != oSequence.lElements.Last())
                         WriteData(_iWriteIteration + 1, ConsoleColor.DarkGreen, _element.ElementName, _element.ElementType, false);
                     else
                         WriteData(_iWriteIteration + 1, ConsoleColor.DarkGreen, _element.ElementName, _element.ElementType, true);
                 }
             }
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 
@@ -135,6 +136,50 @@ namespace SNMP
     {
         public string ElementName { get; set; }
         public DataType ElementType { get; set; }
+    }
+
+    public class TreeLeaf
+    {
+        public List<TreeLeaf> Childrens;
+        public ObjectType oObjectType;
+        public TreeLeaf()
+        {
+            oObjectType = new ObjectType();
+            Childrens = new List<TreeLeaf>();
+        }
+    }
+
+    public class EncoderData
+    {
+        public DataType _oDataType;
+        public bool bCanEncode;
+        public List<string> ValueToEncode;
+
+        public EncoderData()
+        {
+            _oDataType = new DataType();
+            bCanEncode = false;
+            ValueToEncode = new List<string>();
+        }
+
+        public void PresentData()
+        {
+            Console.WriteLine("\nData that you entered:");
+            foreach (string _value in ValueToEncode)
+                Console.WriteLine(_value);
+            Console.Write("\nCan the data be encoded? ");
+            if (bCanEncode)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Yes");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("No");
+            }
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
     }
 
     public class WriteDataClass

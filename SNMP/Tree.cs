@@ -19,7 +19,7 @@ namespace SNMP
             {
                 if (_Data.Name == "iso")
                 {
-                    oRoot.oData = _Data;
+                    oRoot.oObjectType = _Data;
                 }
             }
             FindChildrens(oRoot);
@@ -28,10 +28,10 @@ namespace SNMP
         {
             foreach (ObjectType _Data in DataHub.lData)
             {
-                if (_Data.ParrentName == _Parrent.oData.Name)
+                if (_Data.ParrentName == _Parrent.oObjectType.Name)
                 {
                     _Parrent.Childrens.Add(new TreeLeaf());
-                    _Parrent.Childrens.Last().oData = _Data;
+                    _Parrent.Childrens.Last().oObjectType = _Data;
                     FindChildrens(_Parrent.Childrens.Last());
                 }
             }

@@ -16,6 +16,7 @@ namespace SNMP
             DataHub oDataHub = new DataHub();
             ObjectType oObjectType = new ObjectType();
             EncodingValidator oEncodingValidator = new EncodingValidator();
+            EncoderData oEncoderData = new EncoderData();
 
             oPharser.RunPharser("RFC1213-MIB");
             oDataHub.GenerateTree();
@@ -40,7 +41,7 @@ namespace SNMP
                 Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
                 Console.WriteLine("V) Validate the data to Encode | OID");
                 Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
-                Console.WriteLine("W) Validate the data to Encode | Name Data Type");
+                Console.WriteLine("W) Validate the data to Encode | Any Data Type");
                 Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
                 Console.WriteLine("Q) Quit Program");
                 Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
@@ -51,7 +52,7 @@ namespace SNMP
                 {
                     Console.Clear();
                     Console.SetCursorPosition(0, 0);
-                    oDataHub.WriteTree();
+                    oDataHub.PrintObjectTree();
                     Console.ReadKey();
                 }
                 if (sExit == "F" || sExit == "f")
@@ -86,7 +87,7 @@ namespace SNMP
                 {
                     Console.Clear();
                     Console.SetCursorPosition(0, 0);
-                    oDataHub.WriteTypes();
+                    oDataHub.PrintDataTypes();
                     Console.ReadKey();
                 }
                 if (sExit == "V" || sExit == "v")
@@ -95,7 +96,18 @@ namespace SNMP
                     Console.SetCursorPosition(0, 0);
                     oObjectType = oDataHub.FindByOID();
                     if (oObjectType != null)
-                        Console.WriteLine(oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax));
+                    {
+                        oEncoderData = oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax, 0);
+                        oEncoderData.PresentData();
+                    }
+
+                    Console.ReadKey();
+                }
+                if (sExit == "W" || sExit == "w")
+                {
+                    Console.Clear();
+                    Console.SetCursorPosition(0, 0);
+                    Console.WriteLine(oEncodingValidator.ValidateAnyDataType());
                     Console.ReadKey();
                 }
             }
