@@ -11,27 +11,58 @@ namespace SNMP
     class EncodingValidator : DataHub
     {
         private EncoderData oResult = new EncoderData();
-        private List<EncoderData> oResultList = new List<EncoderData>();
+        private DataType oDataType = new DataType();
 
-        public List<EncoderData> ValidateAnyDataType()
+        public EncoderData ValidateAnyDataType()
         {
-            oResultList.Add(new EncoderData());
+            string sNameOfType;
             Console.Write("Enter a name of Type: ");
-            oResultList.Last()._oDataType = FindDataTypeByName(Console.ReadLine());
-            if (oResultList.Last()._oDataType != null)
+            sNameOfType = Console.ReadLine();
+            if(sNameOfType != "SEQUENCE")
             {
-                oResultList[oResultList.IndexOf(oResultList.Last())] = Validate("\n\nFound Data Type " + 
-                    oResultList.Last()._oDataType.TypeName, oResultList.Last()._oDataType, 0);
-                oResultList.Last().PresentData();
+                oDataType = FindDataTypeByName(sNameOfType);
+                if (oDataType != null)
+                {
+                    oResult = Validate("\n\nFound Data Type " +
+                    oDataType.TypeName, oDataType, 0);
+                }
+                else
+                {
+                    Console.WriteLine("Entered Data Type not found!");
+                    oResult.bCanEncode = false;
+                }
             }
             else
             {
-                Console.WriteLine("Entered Data Type not found!");
-                oResultList.Last().bCanEncode = false;
+                Console.WriteLine("\n\nCreate a sequence to encode.");
+                oDataType = CreateSequence();
+                oResult = Validate("\n\nCreated Sequence: " +
+                    oDataType.TypeName, oDataType, 0);
             }
 
-            return oResultList;
+            return oResult;
         }
+
+        private DataType CreateSequence()
+        {
+            int iSequenceIndex = 0;
+            DataType _oDataType = new DataType();
+            char SequenceComplete = 'Y';
+            while (SequenceComplete == 'Y')
+            {
+                Console.Write("\nEnter a {0} type name: ", iSequenceIndex++);
+                _oDataType.oSequence.lElements.Add(new SequenceElement());
+                _oDataType.oSequence.lElements.Last().ElementName = iSequenceIndex.ToString();
+                _oDataType.oSequence.lElements.Last().ElementType = FindDataTypeByName(Console.ReadLine());
+                Console.WriteLine("\n\nNext data type in sequece? (Y/N)");
+                Console.Write("=>");
+                if (Console.ReadKey().KeyChar == 'N' || Console.ReadKey().KeyChar == 'n')
+                    SequenceComplete = 'N';
+            }
+            return _oDataType;
+        }
+
+
 
         public EncoderData Validate(string _title, DataType _oDataType, byte iteration)
         {

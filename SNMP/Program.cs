@@ -107,7 +107,12 @@ namespace SNMP
                 {
                     Console.Clear();
                     Console.SetCursorPosition(0, 0);
-                    Console.WriteLine(oEncodingValidator.ValidateAnyDataType());
+                    oEncoderData = oEncodingValidator.ValidateAnyDataType();
+                    if (oEncoderData != null)
+                    {
+                        oEncoderData.PresentData();
+                    }
+
                     Console.ReadKey();
                 }
             }
