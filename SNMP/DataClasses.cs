@@ -154,6 +154,7 @@ namespace SNMP
         public DataType _oDataType;
         public bool bCanEncode;
         public List<string> ValueToEncode;
+        public string sErrorDescription = string.Empty;
 
         public EncoderData()
         {
@@ -164,10 +165,15 @@ namespace SNMP
 
         public void PresentData()
         {
-            Console.WriteLine("\nData that you entered:");
-            foreach (string _value in ValueToEncode)
-                Console.WriteLine(_value);
-            Console.Write("\nCan the data be encoded? ");
+            Console.WriteLine("Data Type to encode:");
+            _oDataType.PresentData(1);
+            if (sErrorDescription == string.Empty)
+            {
+                Console.WriteLine("\nData that you entered:");
+                foreach (string _value in ValueToEncode)
+                    Console.WriteLine(_value);
+            }
+            Console.Write("Can the data be encoded? ");
             if (bCanEncode)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -179,6 +185,13 @@ namespace SNMP
                 Console.WriteLine("No");
             }
             Console.ForegroundColor = ConsoleColor.Gray;
+            if (sErrorDescription != string.Empty)
+            {
+                Console.Write("\nError description: ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(sErrorDescription);
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
         }
     }
 

@@ -97,7 +97,8 @@ namespace SNMP
                     oObjectType = oDataHub.FindByOID();
                     if (oObjectType != null)
                     {
-                        oEncoderData = oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax, 0);
+                        oEncoderData = oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax);
+                        oEncodingValidator = new EncodingValidator();
                         oEncoderData.PresentData();
                     }
 
@@ -107,9 +108,11 @@ namespace SNMP
                 {
                     Console.Clear();
                     Console.SetCursorPosition(0, 0);
-                    oEncoderData = oEncodingValidator.ValidateAnyDataType();
+                    oEncoderData = oEncodingValidator.ValidateAnyDataType(oDataHub);
+                    oEncodingValidator = new EncodingValidator();
                     if (oEncoderData != null)
                     {
+                        Console.WriteLine("\n\n────────────────────────────────────────────────────");
                         oEncoderData.PresentData();
                     }
 
