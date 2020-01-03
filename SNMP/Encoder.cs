@@ -8,5 +8,10 @@ namespace SNMP
 {
     class Encoder
     {
+        public void Encoding(EncoderData _oEncoderData)
+        {
+            Console.WriteLine("Jestem w Koderze!\n---------------------------------------------------------------------\n\n");
+            _oEncoderData.PresentData();
+        }
     }
 }
