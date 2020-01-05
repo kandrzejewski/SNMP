@@ -13,8 +13,8 @@ namespace SNMP
         private EncoderData oResult = new EncoderData();
         private byte iteration = 0;
         private bool bSendDataType = false;
-
-        public EncoderData ValidateAnyDataType(DataHub oDataHub)
+        
+        public EncoderData ValidateAnyDataType(DataHub _oDataHub)
         {
             string sNameOfType;
             oResult = new EncoderData();
@@ -24,11 +24,11 @@ namespace SNMP
             sNameOfType = Console.ReadLine();
             if(sNameOfType != "SEQUENCE")
             {
-                oDataType = oDataHub.FindDataTypeByName(sNameOfType);
+                oDataType = _oDataHub.FindDataTypeByName(sNameOfType);
                 if (oDataType != null)
                 {
                     oResult = Validate("\n\nFound Data Type " +
-                    oDataType.TypeName, oDataType);
+                    oDataType.TypeName, oDataType, _oDataHub);
                 }
                 else
                 {
@@ -39,8 +39,8 @@ namespace SNMP
             else
             {
                 Console.WriteLine("\n\nCreate a sequence to encode.");
-                oDataType = CreateSequence(oDataHub);
-                oResult = Validate("\n\nCreated Sequence: ", oDataType);
+                oDataType = CreateSequence(_oDataHub);
+                oResult = Validate("\n\nCreated Sequence: ", oDataType, _oDataHub);
             }
 
             return oResult;
@@ -88,7 +88,7 @@ namespace SNMP
             return _oDataType;
         }
 
-        public EncoderData Validate(string _title, DataType _oDataType)
+        public EncoderData Validate(string _title, DataType _oDataType, DataHub _oDataHub)
         {
             //Console.WriteLine("Iteration: " + iteration);
             //Console.WriteLine("Count: " + oResult.ValueToEncode.Count);
@@ -135,47 +135,42 @@ namespace SNMP
                 {
                     if (!_oDataType.EmptyCheck(_oDataType.oOtherData.ParrentType))
                     {
-                        foreach (DataType _DataType in DataHub.lDataType)
+                        DataType oNewDataType = new DataType();
+                        oNewDataType = CloneDataType(_oDataHub.FindDataTypeByName(_oDataType.oOtherData.ParrentType));
+                        if (oNewDataType != null)
                         {
-                            if (_oDataType.oOtherData.ParrentType == _DataType.TypeName)
+                            if (_oDataType.oRange.Max != 0)
                             {
-                                DataType oNewDataType = new DataType();
-                                oNewDataType = _DataType;
-                                if (_oDataType.oRange.Max != 0)
+                                if (oNewDataType.oRange.Max > _oDataType.oRange.Max || oNewDataType.oRange.Max == 0)
                                 {
-                                    if (oNewDataType.oRange.Max > _oDataType.oRange.Max || oNewDataType.oRange.Max == 0)
-                                    {
-                                        oNewDataType.oRange.Max = _oDataType.oRange.Max;
-                                    }
-                                    if (oNewDataType.oRange.Min < _oDataType.oRange.Min)
-                                    {
-                                        oNewDataType.oRange.Min = _oDataType.oRange.Min;
-                                    }
+                                    oNewDataType.oRange.Max = _oDataType.oRange.Max;
                                 }
-                                if (_oDataType.oSize.Size != 0)
-                                    if (oNewDataType.oSize.Size > _oDataType.oSize.Size || oNewDataType.oSize.Size == 0)
-                                    {
-                                        oNewDataType.oSize.Size = _oDataType.oSize.Size;
-                                    }
+                                if (oNewDataType.oRange.Min < _oDataType.oRange.Min)
+                                {
+                                    oNewDataType.oRange.Min = _oDataType.oRange.Min;
+                                }
+                            }
+                            if (_oDataType.oSize.Size != 0)
+                                if (oNewDataType.oSize.Size > _oDataType.oSize.Size || oNewDataType.oSize.Size == 0)
+                                    oNewDataType.oSize.Size = _oDataType.oSize.Size;
+                        }
 
-                                if (Validate("Parrent of Data Type " + _oDataType.TypeName + " with child restrictions", oNewDataType).bCanEncode)
-                                {
-                                    if (_DataType.TypeName == "INTEGER")
-                                    {
-                                        oResult.bCanEncode = IntegerValidation(_oDataType, Int64.Parse(oResult.ValueToEncode[iteration]));
-                                        return oResult;
-                                    }
-                                    if (_DataType.TypeName == "OCTET STRING")
-                                    {
-                                        oResult.bCanEncode = OctetStringValidation(_oDataType, oResult.ValueToEncode[iteration]);
-                                        return oResult;
-                                    }
-                                    if (_DataType.TypeName == "OBJECT IDENTIFIER")
-                                    {
-                                        oResult.bCanEncode = ObjectIdentifierValidation(_oDataType, oResult.ValueToEncode[iteration]);
-                                        return oResult;
-                                    }
-                                }
+                        if (Validate("Parrent of Data Type " + _oDataType.TypeName + " with child restrictions", oNewDataType, _oDataHub).bCanEncode)
+                        {
+                            if (oNewDataType.TypeName == "INTEGER")
+                            {
+                                oResult.bCanEncode = IntegerValidation(_oDataType, Int64.Parse(oResult.ValueToEncode[iteration]));
+                                return oResult;
+                            }
+                            if (oNewDataType.TypeName == "OCTET STRING")
+                            {
+                                oResult.bCanEncode = OctetStringValidation(_oDataType, oResult.ValueToEncode[iteration]);
+                                return oResult;
+                            }
+                            if (oNewDataType.TypeName == "OBJECT IDENTIFIER")
+                            {
+                                oResult.bCanEncode = ObjectIdentifierValidation(_oDataType, oResult.ValueToEncode[iteration]);
+                                return oResult;
                             }
                         }
                         return oResult;
@@ -190,7 +185,7 @@ namespace SNMP
                             oResult.ValueToEncode.Add(string.Empty);
                         }
                         if (!Validate("\n\n" + (_oDataType.oSequence.lElements.IndexOf(_SequenceElement) + 1) 
-                            + " element of Sequence:", _SequenceElement.ElementType).bCanEncode)
+                            + " element of Sequence:", _SequenceElement.ElementType, _oDataHub).bCanEncode)
                         {
                             oResult.bCanEncode = false;
                             return oResult;
@@ -290,9 +285,6 @@ namespace SNMP
                     oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + ((_oDataType.oRange.Max / 256) + 1) + " bytes!";
                     return false;
                 }
-            Console.WriteLine(System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[iteration]));
-            Console.ReadKey();
-
             return true;
         }
 
@@ -363,5 +355,30 @@ namespace SNMP
             }
             return true;
         }
+
+        private DataType CloneDataType(DataType _CloningDataType)
+        {
+            DataType NewDataType = new DataType();
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.TypeName))
+                NewDataType.TypeName = _CloningDataType.TypeName;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oOtherData.Class))
+                NewDataType.oOtherData.Class = _CloningDataType.oOtherData.Class;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oOtherData.EncodingType))
+                NewDataType.oOtherData.EncodingType = _CloningDataType.oOtherData.EncodingType;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oOtherData.ParrentType))
+                NewDataType.oOtherData.ParrentType = _CloningDataType.oOtherData.ParrentType;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oOtherData.TagNumber))
+                NewDataType.oOtherData.TagNumber = _CloningDataType.oOtherData.TagNumber;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oRange.Max))
+                NewDataType.oRange.Max = _CloningDataType.oRange.Max;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oRange.Min))
+                NewDataType.oRange.Min = _CloningDataType.oRange.Min;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oSize.Size))
+                NewDataType.oSize.Size = _CloningDataType.oSize.Size;
+            if (!_CloningDataType.EmptyCheck(_CloningDataType.oSequence.lElements.Count))
+                NewDataType.oSequence.lElements = _CloningDataType.oSequence.lElements;
+            return NewDataType;
+        }
+
     }
 }

@@ -8,22 +8,22 @@ namespace SNMP
 {
     public class Program
     {
-
+        static DataHub oDataHub = new DataHub();
         static void Main(string[] args)
         {
             string sExit = "";
             Pharser oPharser = new Pharser();
-            DataHub oDataHub = new DataHub();
+           
             ObjectType oObjectType = new ObjectType();
             EncodingValidator oEncodingValidator = new EncodingValidator();
             EncoderData oEncoderData = new EncoderData();
-            Encoder oEncoder = new Encoder(oDataHub);
+            Encoder oEncoder = new Encoder();
 
             oPharser.RunPharser("RFC1213-MIB");
             oDataHub.GenerateTree();
-            
-            while(sExit != "Q" & sExit != "q")
-            {
+
+            while (sExit != "Q" & sExit != "q")
+            {   
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.SetCursorPosition(30, Console.CursorTop++);
@@ -101,7 +101,7 @@ namespace SNMP
                     oObjectType = oDataHub.FindByOID();
                     if (oObjectType != null)
                     {
-                        oEncoderData = oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax);
+                        oEncoderData = oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax, oDataHub);
                         oEncodingValidator = new EncodingValidator();
                         oEncoderData.PresentData();
                     }
@@ -127,7 +127,7 @@ namespace SNMP
                     oObjectType = oDataHub.FindByOID();
                     if (oObjectType != null)
                     {
-                        oEncoder.EncodingInit(oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax));
+                        oEncoder.EncodingInit(oEncodingValidator.Validate("\n\n Data Type of object " + oObjectType.Name, oObjectType.Syntax, oDataHub), oDataHub);
                         oEncodingValidator = new EncodingValidator();
                     }
                     Console.ReadKey();
@@ -136,7 +136,7 @@ namespace SNMP
                 {
                     Console.Clear();
                     Console.SetCursorPosition(0, 0);
-                    oEncoder.EncodingInit(oEncodingValidator.ValidateAnyDataType(oDataHub));
+                    oEncoder.EncodingInit(oEncodingValidator.ValidateAnyDataType(oDataHub), oDataHub);
                     oEncodingValidator = new EncodingValidator();
                     Console.ReadKey();
                 }
