@@ -111,17 +111,17 @@ namespace SNMP
                     Console.WriteLine("────────────────────────────────────────────────────");
                 }
                 Console.ForegroundColor = ConsoleColor.Gray;
-                if (_oDataType.TypeName == "INTEGER" || _oDataType.oOtherData.ParrentType == "INTEGER")
+                if (_oDataType.TypeName == "INTEGER")
                 {
                     oResult.bCanEncode = IntegerValidation(_oDataType);
                     return oResult;
                 }
-                else if (_oDataType.TypeName == "OCTET STRING" || _oDataType.oOtherData.ParrentType == "OCTET STRING")
+                else if (_oDataType.TypeName == "OCTET STRING")
                 {
                     oResult.bCanEncode = OctetStringValidation(_oDataType);
                     return oResult;
                 }
-                else if (_oDataType.TypeName == "OBJECT IDENTIFIER" || _oDataType.oOtherData.ParrentType == "OBJECT IDENTIFIER")
+                else if (_oDataType.TypeName == "OBJECT IDENTIFIER")
                 {
                     oResult.bCanEncode = ObjectIdentifierValidation(_oDataType);
                     return oResult;
@@ -138,24 +138,47 @@ namespace SNMP
                         foreach (DataType _DataType in DataHub.lDataType)
                         {
                             if (_oDataType.oOtherData.ParrentType == _DataType.TypeName)
-                                if (Validate("Parrent of Data Type of Object " + _oDataType.TypeName, _DataType).bCanEncode)
+                            {
+                                DataType oNewDataType = new DataType();
+                                oNewDataType = _DataType;
+                                if (_oDataType.oRange.Max != 0)
                                 {
-                                    if (_DataType.TypeName == "INTEGER" || _DataType.oOtherData.ParrentType == "INTEGER")
+                                    if (oNewDataType.oRange.Max > _oDataType.oRange.Max || oNewDataType.oRange.Max == 0)
+                                    {
+                                        oNewDataType.oRange.Max = _oDataType.oRange.Max;
+                                    }
+                                    if (oNewDataType.oRange.Min < _oDataType.oRange.Min)
+                                    {
+                                        oNewDataType.oRange.Min = _oDataType.oRange.Min;
+                                    }
+                                }
+                                if (_oDataType.oSize.Size != 0)
+                                    if (oNewDataType.oSize.Size > _oDataType.oSize.Size || oNewDataType.oSize.Size == 0)
+                                    {
+                                        oNewDataType.oSize.Size = _oDataType.oSize.Size;
+                                    }
+
+                                if (Validate("Parrent of Data Type " + _oDataType.TypeName + " with child restrictions", oNewDataType).bCanEncode)
+                                {
+                                    if (_DataType.TypeName == "INTEGER")
                                     {
                                         oResult.bCanEncode = IntegerValidation(_oDataType, Int64.Parse(oResult.ValueToEncode[iteration]));
                                         return oResult;
                                     }
-                                    if (_DataType.TypeName == "OCTET STRING" || _DataType.oOtherData.ParrentType == "OCTET STRING")
+                                    if (_DataType.TypeName == "OCTET STRING")
                                     {
                                         oResult.bCanEncode = OctetStringValidation(_oDataType, oResult.ValueToEncode[iteration]);
                                         return oResult;
                                     }
-                                    if (_DataType.TypeName == "OBJECT IDENTIFIER" || _DataType.oOtherData.ParrentType == "OBJECT IDENTIFIER") {
+                                    if (_DataType.TypeName == "OBJECT IDENTIFIER")
+                                    {
                                         oResult.bCanEncode = ObjectIdentifierValidation(_oDataType, oResult.ValueToEncode[iteration]);
                                         return oResult;
                                     }
                                 }
+                            }
                         }
+                        return oResult;
                     }
                 }
                 else if (_oDataType.oSequence.lElements.Count > 0)
@@ -197,7 +220,7 @@ namespace SNMP
             bool bConversionStatus;
             if(_oDataType.TypeName !="")
                 Console.WriteLine("Enter a Value:\n({0}\nRange {1}..{2})\n",_oDataType.TypeName, 
-                    _oDataType.oRange.Min, _oDataType.oRange.Max);
+                     _oDataType.oRange.Min, _oDataType.oRange.Max);
             else
                 Console.WriteLine("Enter a Value:\n({0}\nRange {1}..{2})\n", _oDataType.oOtherData.ParrentType,
                     _oDataType.oRange.Min, _oDataType.oRange.Max);
@@ -262,11 +285,14 @@ namespace SNMP
                     return false;
                 }
             if (!_oDataType.EmptyCheck(_oDataType.oRange.Max))
-                if (System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[iteration]) > _oDataType.oRange.Max / 8)
+                if (System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[iteration]) > (_oDataType.oRange.Max + 1) / 256)
                 {
-                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + ((_oDataType.oRange.Max / 8) + 1) + " bytes!";
+                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + ((_oDataType.oRange.Max / 256) + 1) + " bytes!";
                     return false;
                 }
+            Console.WriteLine(System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[iteration]));
+            Console.ReadKey();
+
             return true;
         }
 

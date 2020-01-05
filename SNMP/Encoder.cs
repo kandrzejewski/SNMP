@@ -37,8 +37,6 @@ namespace SNMP
         {
             if (_oDataType.oSequence.lElements.Count == 0)
             {
-                //if (_oDataType.oOtherData.Class == null && _oDataType.oOtherData.TagNumber == 0 
-                //    && _oDataType.oOtherData.EncodingType == null)
                 if (_oDataType.oOtherData.ParrentType == null)
                 {
                     Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber);
@@ -49,12 +47,23 @@ namespace SNMP
                     {
                         oDataType = oDataHub.FindDataTypeByName(_oDataType.oOtherData.ParrentType);
                         Console.WriteLine(oDataType.TypeName);
+                        while (oDataType.oOtherData.ParrentType != null)
+                        {
+                            oDataType = oDataHub.FindDataTypeByName(oDataType.oOtherData.ParrentType);
+                            Console.WriteLine(oDataType.TypeName);
+                        }
                         Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
                     }
                     else
                     {
-                        Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, _oDataType.oOtherData.ParrentType);
-                        //_oDataType.oOtherData.Class != null && _oDataType.oOtherData.TagNumber != 0 &&
+                        oDataType = oDataHub.FindDataTypeByName(_oDataType.oOtherData.ParrentType);
+                        Console.WriteLine(oDataType.TypeName);
+                        while (oDataType.oOtherData.ParrentType != null)
+                        {
+                            oDataType = oDataHub.FindDataTypeByName(oDataType.oOtherData.ParrentType);
+                            Console.WriteLine(oDataType.TypeName);
+                        }
+                        Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, oDataType.TypeName);
                     }
 
                 }
@@ -64,7 +73,6 @@ namespace SNMP
 
             }
         }
-
 
         private void Encode(string _ValueToEncode, string _Class, int _TagNumber)
         {

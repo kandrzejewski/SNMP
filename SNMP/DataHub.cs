@@ -49,7 +49,42 @@ namespace SNMP
             lDataType.Last().oOtherData.Class = "UNIVERSAL";
             lDataType.Last().oOtherData.TagNumber = 16;
 
-
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test1";
+            lDataType.Last().oOtherData.Class = "APPLICATION";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
+            lDataType.Last().oOtherData.ParrentType = "INTEGER";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test2";
+            lDataType.Last().oOtherData.Class = "APPLICATION";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
+            lDataType.Last().oOtherData.ParrentType = "Gauge";
+            lDataType.Last().oRange.Min = 10;
+            lDataType.Last().oRange.Max = 20;
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test3";
+            lDataType.Last().oOtherData.Class = "APPLICATION";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
+            lDataType.Last().oOtherData.ParrentType = "DisplayString";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test4";
+            lDataType.Last().oOtherData.Class = "APPLICATION";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
+            lDataType.Last().oOtherData.ParrentType = "Test2";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test5";
+            lDataType.Last().oOtherData.Class = "APPLICATION";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
+            lDataType.Last().oOtherData.ParrentType = "DisplayString";
+            lDataType.Last().oRange.Min = 0;
+            lDataType.Last().oRange.Max = 1023;
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
 
         public void GenerateTree()
