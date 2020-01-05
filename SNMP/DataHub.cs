@@ -30,24 +30,24 @@ namespace SNMP
             lDataType.Last().TypeName = "INTEGER";
             lDataType.Last().oRange.Min = -2147483648;
             lDataType.Last().oRange.Max = 2147483647;
-            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
-            lDataType.Last().oOtherData.TypeID = 2;
+            lDataType.Last().oOtherData.Class = "UNIVERSAL";
+            lDataType.Last().oOtherData.TagNumber = 2;
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "OCTET STRING";
-            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
-            lDataType.Last().oOtherData.TypeID = 4;
+            lDataType.Last().oOtherData.Class = "UNIVERSAL";
+            lDataType.Last().oOtherData.TagNumber = 4;
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "NULL";
-            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
-            lDataType.Last().oOtherData.TypeID = 5;
+            lDataType.Last().oOtherData.Class = "UNIVERSAL";
+            lDataType.Last().oOtherData.TagNumber = 5;
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "OBJECT IDENTIFIER";
-            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
-            lDataType.Last().oOtherData.TypeID = 6;
+            lDataType.Last().oOtherData.Class = "UNIVERSAL";
+            lDataType.Last().oOtherData.TagNumber = 6;
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "SEQUENCE";
-            lDataType.Last().oOtherData.Visibility = "UNIVERSAL";
-            lDataType.Last().oOtherData.TypeID = 16;
+            lDataType.Last().oOtherData.Class = "UNIVERSAL";
+            lDataType.Last().oOtherData.TagNumber = 16;
 
 
         }

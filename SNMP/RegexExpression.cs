@@ -49,8 +49,8 @@ namespace SNMP
             SyntaxSequence = @"SEQUENCE\sOF\s(?<Name>\w+)";
             SyntaxList = @"(?<ParrentName>\w+)\s\{\s(?<Body>.*?)\s\}";
             SyntaxListBody = @"(?<Name>\S+)\((?<Restriction>\d*)\)|(?<NameWithoutRestriction>\w+)";
-            DataTypes = @"(?<TypeName>\S+[^(DEFINITIONS)])\s+\:\:\=(\s+\[(?<Visibility>\w+)\s" +
-                        @"(?<TypeID>\d+)\]\s+(?<EncodingType>\w+)\s+|\s+)(?<ParrentType>\w+\s\w+|" +
+            DataTypes = @"(?<TypeName>\S+[^(DEFINITIONS)])\s+\:\:\=(\s+\[(?<Class>\w+)\s" +
+                        @"(?<TagNumber>\d+)\]\s+(?<EncodingType>\w+)\s+|\s+)(?<ParrentType>\w+\s\w+|" +
                         @"\w+[^(SEQUENCE)])(\s(?<Restriction>\(.*?\)|)\s)";          
             DataTypesSize = @"\(SIZE\s\((?<Value>\d+)\)";
             DataTypesMin = @"\((?<Min>\d+)\.\.\d+\)";

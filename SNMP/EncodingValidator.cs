@@ -126,6 +126,11 @@ namespace SNMP
                     oResult.bCanEncode = ObjectIdentifierValidation(_oDataType);
                     return oResult;
                 }
+                else if (_oDataType.TypeName == "NULL")
+                {
+                    oResult.bCanEncode = true;
+                    return oResult;
+                }
                 else if (_oDataType.oSequence.lElements.Count() == 0)
                 {
                     if (!_oDataType.EmptyCheck(_oDataType.oOtherData.ParrentType))
@@ -253,13 +258,13 @@ namespace SNMP
             if (!_oDataType.EmptyCheck(_oDataType.oSize.Size))
                 if (System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[iteration]) > _oDataType.oSize.Size)
                 {
-                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + _oDataType.oSize.Size + " bits!";
+                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + _oDataType.oSize.Size + " bytes!";
                     return false;
                 }
             if (!_oDataType.EmptyCheck(_oDataType.oRange.Max))
                 if (System.Text.ASCIIEncoding.ASCII.GetByteCount(oResult.ValueToEncode[iteration]) > _oDataType.oRange.Max / 8)
                 {
-                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + ((_oDataType.oRange.Max / 8) + 1) + " bits!";
+                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + ((_oDataType.oRange.Max / 8) + 1) + " bytes!";
                     return false;
                 }
             return true;
@@ -270,13 +275,13 @@ namespace SNMP
             if (!_oDataType.EmptyCheck(_oDataType.oSize.Size))
                 if (System.Text.ASCIIEncoding.ASCII.GetByteCount(_value) > _oDataType.oSize.Size)
                 {
-                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + _oDataType.oSize.Size + " bits!";
+                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + _oDataType.oSize.Size + " bytes!";
                     return false;
                 }
             if (!_oDataType.EmptyCheck(_oDataType.oRange.Max))
                 if (System.Text.ASCIIEncoding.ASCII.GetByteCount(_value) > _oDataType.oRange.Max/8)
                 {
-                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + ((_oDataType.oRange.Max / 8) + 1) + " bits!";
+                    oResult.sErrorDescription = "Entered value is out of range! Max size of value is " + ((_oDataType.oRange.Max / 8) + 1) + " bytes!";
                     return false;
                 }
                 return true;

@@ -108,14 +108,14 @@ namespace SNMP
                                     DataHub.lDataType.Last().TypeName = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
-                            case "Visibility":
+                            case "Class":
                                 {
-                                    DataHub.lDataType.Last().oOtherData.Visibility = _match.Groups[_iGroupNumber].Value;
+                                    DataHub.lDataType.Last().oOtherData.Class = _match.Groups[_iGroupNumber].Value;
                                     continue;
                                 }
-                            case "TypeID":
+                            case "TagNumber":
                                 {
-                                    DataHub.lDataType.Last().oOtherData.TypeID = Int32.Parse(_match.Groups[_iGroupNumber].Value);
+                                    DataHub.lDataType.Last().oOtherData.TagNumber = Int32.Parse(_match.Groups[_iGroupNumber].Value);
                                     continue;
                                 }
                             case "EncodingType":

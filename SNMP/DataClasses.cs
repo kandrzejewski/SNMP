@@ -69,12 +69,12 @@ namespace SNMP
             if (!EmptyCheck(TypeName))
                 WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
                 ConsoleColor.Magenta, "TypeName", TypeName, false);
-            if (!EmptyCheck(oOtherData.Visibility))
+            if (!EmptyCheck(oOtherData.Class))
                 WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
-                ConsoleColor.Magenta, "Visibility", oOtherData.Visibility, false);
-            if (!EmptyCheck(oOtherData.TypeID))
+                ConsoleColor.Magenta, "Class", oOtherData.Class, false);
+            if (!EmptyCheck(oOtherData.TagNumber))
                 WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
-                ConsoleColor.Magenta, "TypeID", oOtherData.TypeID, false);
+                ConsoleColor.Magenta, "TagNumber", oOtherData.TagNumber, false);
             if (!EmptyCheck(oOtherData.EncodingType))
                 WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
                 ConsoleColor.Magenta, "EncodingType", oOtherData.EncodingType, false);
@@ -121,8 +121,8 @@ namespace SNMP
 
     public class OtherData
     {
-        public string Visibility { get; set; }
-        public int TypeID { get; set; }
+        public string Class { get; set; }
+        public int TagNumber { get; set; }
         public string EncodingType { get; set; }
         public string ParrentType { get; set; }
     }
@@ -167,6 +167,7 @@ namespace SNMP
         {
             Console.WriteLine("Data Type to encode:");
             _oDataType.PresentData(1);
+            Console.WriteLine(" └────────────────────────────────");
             if (sErrorDescription == string.Empty)
             {
                 Console.WriteLine("\nData that you entered:");
