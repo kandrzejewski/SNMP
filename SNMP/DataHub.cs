@@ -53,7 +53,7 @@ namespace SNMP
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "Test1";
             lDataType.Last().oOtherData.Class = "APPLICATION";
-            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.TagNumber = 128;
             lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
             lDataType.Last().oOtherData.ParrentType = "INTEGER";
             lDataType.Add(new DataType());
@@ -84,6 +84,14 @@ namespace SNMP
             lDataType.Last().oOtherData.ParrentType = "DisplayString";
             lDataType.Last().oRange.Min = 0;
             lDataType.Last().oRange.Max = 1023;
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test6";
+            lDataType.Last().oOtherData.TagNumber = 18;
+            lDataType.Last().oOtherData.ParrentType = "Gauge";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test7";
+            lDataType.Last().oOtherData.ParrentType = "Test6";
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
 
