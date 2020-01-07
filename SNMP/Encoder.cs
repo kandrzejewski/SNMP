@@ -10,6 +10,7 @@ namespace SNMP
     class Encoder
     {
         DataType oDataType = new DataType();
+        
 
         public void EncodingInit(EncoderData _oEncoderData, DataHub _oDataHub)
         {
@@ -28,13 +29,15 @@ namespace SNMP
             }
         }
 
-        private void DataTypeClassification(DataType _oDataType, List<string> _ValueToEncode, DataHub _oDataHub)
+        private byte[] DataTypeClassification(DataType _oDataType, List<string> _ValueToEncode, DataHub _oDataHub)
         {
+            byte[] EncodedValue;
+
             if (_oDataType.oSequence.lElements.Count == 0)
             {
                 if (_oDataType.oOtherData.ParrentType == null)
                 {
-                    Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, _oDataType.oOtherData.TagNumber);
+                    return EncodedValue = Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, _oDataType.oOtherData.TagNumber);
                 }
                 else
                 {
@@ -77,11 +80,11 @@ namespace SNMP
 
                         if (_oDataType.oOtherData.Class != null && _oDataType.oOtherData.TagNumber != 0)
                         {
-                            Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
+                            return EncodedValue = Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
                         }
                         else if (_oDataType.oOtherData.Class == null && _oDataType.oOtherData.TagNumber != 0)
                         {
-                            Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", _oDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
+                            return EncodedValue = Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", _oDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
                         }
                             
                         else
@@ -90,9 +93,9 @@ namespace SNMP
                             oParrentDataType = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
 
                             if (oParrentDataType.oOtherData.Class == null && oParrentDataType.oOtherData.TagNumber != 0)
-                                Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", oParrentDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
+                                return EncodedValue = Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", oParrentDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
                             else
-                                Encode(_ValueToEncode[0], oParrentDataType.oOtherData.Class, oParrentDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
+                                return EncodedValue = Encode(_ValueToEncode[0], oParrentDataType.oOtherData.Class, oParrentDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
                         }
                     }
                 }
@@ -102,20 +105,52 @@ namespace SNMP
                 int Iterator = 0;
                 List<String> Value = new List<string>();
                 Value.Add(null);
-                if (_oDataType.oOtherData.ParrentType == null)
+                byte[] EncodedIdentifier;
+                byte[] EncodedLenght;
+                byte[] EncodedContents = null;
+
+                if(_oDataType.oOtherData.ParrentType == null)
                 {
-                    foreach (SequenceElement oSequenceElement in _oDataType.oSequence.lElements)
-                    {
-                        Value[0] = _ValueToEncode[Iterator];
-                        DataTypeClassification(oSequenceElement.ElementType, Value, _oDataHub);
-                    }
-                    //EncodeSequence(_oDataType.oOtherData.);
+                    EncodedIdentifier = EncodeIdentifier(_oDataType.oOtherData.Class, true, _oDataType.oOtherData.TagNumber);
                 }
                 else
                 {
-
+                    if(_oDataType.oOtherData.Class == null)
+                    {
+                        if(_oDataType.oOtherData.TagNumber == 0)
+                        {
+                            DataType oParrentDataType = new DataType();
+                            oParrentDataType = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
+                            if(oParrentDataType.oOtherData.Class != null)
+                                EncodedIdentifier = EncodeIdentifier(oParrentDataType.oOtherData.Class, true, oParrentDataType.oOtherData.TagNumber);
+                            else
+                                EncodedIdentifier = EncodeIdentifier("CONTEXT-SPECIFIC", true, oParrentDataType.oOtherData.TagNumber);
+                        }
+                        else
+                            EncodedIdentifier = EncodeIdentifier("CONTEXT-SPECIFIC", true, _oDataType.oOtherData.TagNumber);
+                    }
+                    else
+                        EncodedIdentifier = EncodeIdentifier(_oDataType.oOtherData.Class, true, _oDataType.oOtherData.TagNumber);
                 }
+
+                foreach (SequenceElement oSequenceElement in _oDataType.oSequence.lElements)
+                {
+                    Value[0] = _ValueToEncode[Iterator];
+                    if (Iterator == 0)
+                    {
+                        EncodedContents = DataTypeClassification(oSequenceElement.ElementType, Value, _oDataHub);
+                    }
+                    else
+                        EncodedContents = EncodedContents.Concat(DataTypeClassification(oSequenceElement.ElementType, Value, _oDataHub)).ToArray();
+                    Iterator++;
+                }
+
+                EncodedLenght = EncodeLenght(EncodedContents);
+                PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
+
+                return EncodedValue = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
             }
+            return EncodedValue = null;
         }
 
         private DataType FindParrent(DataHub _oDataHub, string ParrentName)
@@ -128,7 +163,7 @@ namespace SNMP
                 return FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
         }
 
-        private void Encode(string _ValueToEncode, string _Class, int _TagNumber, int _OriginTagNumber)
+        private byte[] Encode(string _ValueToEncode, string _Class, int _TagNumber, int _OriginTagNumber)
         {
             byte[] Encoded;
             byte[] EncodedIdentifier;
@@ -143,7 +178,8 @@ namespace SNMP
                         EncodedContents = EncodeInt(Int32.Parse(_ValueToEncode));
                         EncodedLenght = EncodeLenght(EncodedContents);
                         PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
-                        break;
+
+                        return Encoded = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
                     }
                 case 4:
                     {
@@ -152,7 +188,8 @@ namespace SNMP
                         EncodedContents = EncodeString(_ValueToEncode);
                         EncodedLenght = EncodeLenght(EncodedContents);
                         PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
-                        break;
+
+                        return Encoded = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
                     }
                 case 5:
                     {
@@ -161,18 +198,20 @@ namespace SNMP
                         EncodedContents = null;
                         EncodedLenght = EncodeLenght(new byte[0]);
                         PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
-                        break;
+
+                        return Encoded = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
                     }
                 case 6:
                     {
                         Console.WriteLine("Koduję se Objecta!");
                         EncodedIdentifier = EncodeIdentifier(_Class, false, _TagNumber);
-                        break;
-                    }
+                        return Encoded = null;
+                    }         
             }
+            return Encoded = null;
         }
 
-        private void Encode(string _ValueToEncode, int _TagNumber, string _ParrentName)
+        /*private void Encode(string _ValueToEncode, int _TagNumber, string _ParrentName)
         {
             byte[] Encoded;
             byte[] EncodedIdentifier;
@@ -207,7 +246,7 @@ namespace SNMP
                         break;
                     }
             }
-        }
+        }*/
 
         private void Encode(string _ValueToEncode, string _Class, string _ParrentClass, int _TagNumber,int _ParrentTagNumber, int _OriginTagNumber)
         {
@@ -237,6 +276,8 @@ namespace SNMP
                         //Array.Copy(EncodedParrentContents, 0, EncodedContents, EncodedParrentIdentifier.Length + EncodedParrentLenght.Length, EncodedParrentContents.Length);
                         EncodedLenght = EncodeLenght(EncodedContents);
                         PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
+
+                        Encoded = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
                         break;
                     }
                 case 4:
@@ -250,6 +291,8 @@ namespace SNMP
                         EncodedContents = EncodedParrentIdentifier.Concat(EncodedParrentLenght.Concat(EncodedParrentContents)).ToArray();
                         EncodedLenght = EncodeLenght(EncodedContents);
                         PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
+
+                        Encoded = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
                         break;
                     }
                 case 6:
