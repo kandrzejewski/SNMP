@@ -27,6 +27,12 @@ namespace SNMP
         private void AddBasicDataTypes()
         {
             lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "BOOLEAN";
+            lDataType.Last().oOtherData.Class = "UNIVERSAL";
+            lDataType.Last().oOtherData.TagNumber = 1;
+            lDataType.Last().oRange.Min = 0;
+            lDataType.Last().oRange.Max = 1;
+            lDataType.Add(new DataType());
             lDataType.Last().TypeName = "INTEGER";
             lDataType.Last().oRange.Min = -2147483648;
             lDataType.Last().oRange.Max = 2147483647;
@@ -91,6 +97,21 @@ namespace SNMP
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "Test7";
             lDataType.Last().oOtherData.ParrentType = "Test6";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test8";
+            lDataType.Last().oOtherData.Class = "APPLICATION";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
+            lDataType.Last().oOtherData.ParrentType = "BOOLEAN";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test9";
+            lDataType.Last().oOtherData.Class = "APPLICATION";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.ParrentType = "BOOLEAN";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test10";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.ParrentType = "BOOLEAN";
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }

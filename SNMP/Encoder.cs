@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace SNMP
 {
@@ -178,6 +179,16 @@ namespace SNMP
             byte[] EncodedContents;
             switch (_OriginTagNumber)
             {
+                case 1:
+                    {
+                        //Console.WriteLine("Koduję se Boola!");
+                        EncodedIdentifier = EncodeIdentifier(_Class, false, _TagNumber);
+                        EncodedContents = EncodeBool(_ValueToEncode);
+                        EncodedLenght = EncodeLenght(EncodedContents);
+                        PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
+
+                        return Encoded = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
+                    }
                 case 2:
                     {
                         //Console.WriteLine("Koduję se Integera!");
@@ -267,6 +278,21 @@ namespace SNMP
 
             switch (_OriginTagNumber)
             {
+                case 1:
+                    {
+                        //Console.WriteLine("Koduję se Boola!");
+                        EncodedParrentIdentifier = EncodeIdentifier(_ParrentClass, false, _ParrentTagNumber);
+                        EncodedParrentContents = EncodeBool(_ValueToEncode);
+                        EncodedParrentLenght = EncodeLenght(EncodedParrentContents);
+
+                        EncodedIdentifier = EncodeIdentifier(_Class, true, _TagNumber);
+                        EncodedContents = EncodedParrentIdentifier.Concat(EncodedParrentLenght.Concat(EncodedParrentContents)).ToArray();
+                        EncodedLenght = EncodeLenght(EncodedContents);
+                        PrintEncodedValue(EncodedIdentifier, EncodedLenght, EncodedContents);
+
+                        Encoded = EncodedIdentifier.Concat(EncodedLenght.Concat(EncodedContents)).ToArray();
+                        break;
+                    }
                 case 2:
                     {
                         //Console.WriteLine("Koduję se EXPLICIT ten typ jako integer");
@@ -370,6 +396,17 @@ namespace SNMP
                 return 0;
             else
                 return 32;
+        }
+
+        private byte[] EncodeBool(string _ValueToEncode)
+        {
+            byte[] EncodedContents = new byte[1];
+
+            if (_ValueToEncode == "true")
+                EncodedContents[0] = 255;
+            else
+                EncodedContents[0] = 0;
+            return EncodedContents;
         }
 
         private byte[] EncodeInt(int _ValueToEncode)
@@ -493,6 +530,19 @@ namespace SNMP
             {
                 //Console.WriteLine("Kod int znaku:" + AsciiValues[i]);
                 EncodedContents[i] = EncodeInt(AsciiValues[i])[0];
+            }
+            return EncodedContents;
+        }
+
+        private byte[] EncodeObjectIdentifier(string _ValueToEncode)
+        {
+            byte[] EncodedContents;
+            MatchCollection OIDS = Regex.Matches(@"\S+", _ValueToEncode, RegexOptions.Singleline | RegexOptions.Compiled);
+
+            foreach (Match _match in OIDS)
+            {
+                //_match.Groups[0].Value;
+
             }
             return EncodedContents;
         }

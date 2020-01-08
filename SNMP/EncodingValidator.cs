@@ -131,6 +131,11 @@ namespace SNMP
                     oResult.bCanEncode = true;
                     return oResult;
                 }
+                else if (_oDataType.TypeName == "BOOLEAN")
+                {
+                    oResult.bCanEncode = BooleanValidation(_oDataType);
+                    return oResult;
+                }
                 else if (_oDataType.oSequence.lElements.Count() == 0)
                 {
                     if (!_oDataType.EmptyCheck(_oDataType.oOtherData.ParrentType))
@@ -170,6 +175,11 @@ namespace SNMP
                             if (oNewDataType.TypeName == "OBJECT IDENTIFIER")
                             {
                                 oResult.bCanEncode = ObjectIdentifierValidation(_oDataType, oResult.ValueToEncode[iteration]);
+                                return oResult;
+                            }
+                            if (oNewDataType.TypeName == "BOOLEAN")
+                            {
+                                oResult.bCanEncode = BooleanValidation(_oDataType, oResult.ValueToEncode[iteration]);
                                 return oResult;
                             }
                         }
@@ -354,6 +364,35 @@ namespace SNMP
                 }
             }
             return true;
+        }
+
+        private bool BooleanValidation(DataType _oDataType)
+        {
+            Console.WriteLine("Enter a Value\n(true or false)");
+            Console.Write("=>");
+            oResult.ValueToEncode[iteration] = Console.ReadLine().ToLower();
+            if (oResult.ValueToEncode[iteration] != "true" && oResult.ValueToEncode[iteration] != "false")
+            {
+                    oResult.sErrorDescription = "Entered value is incorrect. BOOLEAN can take only true and false values!";
+                    return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool BooleanValidation(DataType _oDataType, string _value)
+        {
+            if (oResult.ValueToEncode[iteration] != "true" && oResult.ValueToEncode[iteration] != "false")
+            {
+                oResult.sErrorDescription = "Entered value is incorrect. BOOLEAN can take only true and false values!";
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private DataType CloneDataType(DataType _CloningDataType)
