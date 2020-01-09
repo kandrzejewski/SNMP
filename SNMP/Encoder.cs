@@ -32,112 +32,45 @@ namespace SNMP
         private byte[] DataTypeClassification(DataType _oDataType, List<string> _ValueToEncode, DataHub _oDataHub)
         {
             byte[] EncodedValue;
+            int iTagNumber = 0;
+            string sClass = null;
 
             if (_oDataType.oSequence.lElements.Count == 0)
             {
                 if (_oDataType.oOtherData.ParrentType == null)
                 {
-                    return EncodedValue = Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, _oDataType.oOtherData.TagNumber);
+                    return EncodedValue = _oDataType.oOtherData.Class != null ?
+                        Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, _oDataType.oOtherData.TagNumber) :
+                        Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", _oDataType.oOtherData.TagNumber, _oDataType.oOtherData.TagNumber);
                 }
                 else
-                {
+                {                   
                     if (_oDataType.oOtherData.EncodingType == "EXPLICIT")
                     {
-                        int iTagNumber = 0;
                         int iParrentTagNumber = 0;
-                        string sClass = null;
                         string sParrentClass = null;
 
-
-                        ClassificationIdentifier(_oDataHub, _oDataType);
+                        iTagNumber = ClassificationIdentifier(_oDataHub, _oDataType).Key;
+                        sClass = ClassificationIdentifier(_oDataHub, _oDataType).Value;
 
                         oDataType = _oDataHub.FindDataTypeByName(_oDataType.oOtherData.ParrentType);
-                        ClassificationIdentifier(_oDataHub, oDataType);
+                        iParrentTagNumber = ClassificationIdentifier(_oDataHub, oDataType).Key;
+                        sParrentClass = ClassificationIdentifier(_oDataHub, oDataType).Value;
                         while (oDataType.oOtherData.ParrentType != null)
-                        {
-                         oDataType = _oDataHub.FindDataTypeByName(oDataType.oOtherData.ParrentType);
-                        Console.WriteLine(oDataType.TypeName);
-                        }
+                            oDataType = _oDataHub.FindDataTypeByName(oDataType.oOtherData.ParrentType);
 
-                        return EncodedValue = Encode(_ValueToEncode[0], sClass, sParrentClass, iTagNumber, iParrentTagNumber, oDataType.oOtherData.TagNumber);
-                        /*if(_oDataType.oOtherData.TagNumber != 0)
-                        {
-                            iTagNumber = _oDataType.oOtherData.TagNumber;
-                            sClass = _oDataType.oOtherData.Class != null ?
-                                _oDataType.oOtherData.Class : "CONTEXT-SPECIFIC";
-                        }
-                        else
-                        {
-                            iTagNumber = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType).oOtherData.TagNumber;
-                            sClass = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType).oOtherData.Class != null ?
-                               FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType).oOtherData.Class : "CONTEXT-SPECIFIC";
-                        }*/
-                        //oDataType = _oDataHub.FindDataTypeByName(_oDataType.oOtherData.ParrentType); 
-                        //while (oDataType.oOtherData.ParrentType != null)
-                        //{
-                        // oDataType = _oDataHub.FindDataTypeByName(oDataType.oOtherData.ParrentType);
-                        //Console.WriteLine(oDataType.TypeName);
-                        //}
-                        //DataType oParrentDataType = new DataType();
-                        //oParrentDataType = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
-
-                        //Console.WriteLine(oDataType.TypeName);
-
-                        //if (_oDataType.oOtherData.Class != null && _oDataType.oOtherData.TagNumber != 0)
-                        //{
-                        //return EncodedValue = Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, ParrentClass, _oDataType.oOtherData.TagNumber,
-                        //ParrentTagNumber, oDataType.oOtherData.TagNumber);
-                        //}
-
-
-
-
-
-                        /*if (_oDataType.oOtherData.Class != null && _oDataType.oOtherData.TagNumber != 0)
-                            if (ParrentClass != null && ParrentTagNumber != 0)
-                                return EncodedValue = Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, ParrentClass, _oDataType.oOtherData.TagNumber,
-                                    ParrentTagNumber, oDataType.oOtherData.TagNumber);
-                            else
-                                return EncodedValue = Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, "CONTEXT-SPECIFIC", _oDataType.oOtherData.TagNumber,
-                                    ParrentTagNumber, oDataType.oOtherData.TagNumber);
-
-                        else
-                            if (ParrentClass != null && ParrentTagNumber != 0)
-                                return EncodedValue = Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", ParrentClass, 0,
-                                    ParrentTagNumber, oDataType.oOtherData.TagNumber);
-                            else
-                                return EncodedValue = Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", ParrentClass, 0,
-                                    ParrentTagNumber, oDataType.oOtherData.TagNumber);*/
+                        return EncodedValue = Encode(_ValueToEncode[0], sClass, sParrentClass, iTagNumber, iParrentTagNumber, oDataType.oOtherData.TagNumber);               
                     }
                     else
                     {
+                        iTagNumber = ClassificationIdentifier(_oDataHub, _oDataType).Key;
+                        sClass = ClassificationIdentifier(_oDataHub, _oDataType).Value;
+
                         oDataType = _oDataHub.FindDataTypeByName(_oDataType.oOtherData.ParrentType);
-                        //Console.WriteLine(oDataType.TypeName);
                         while (oDataType.oOtherData.ParrentType != null)
-                        {
                             oDataType = _oDataHub.FindDataTypeByName(oDataType.oOtherData.ParrentType);
-                            //Console.WriteLine(oDataType.TypeName);
-                        }
 
-                        if (_oDataType.oOtherData.Class != null && _oDataType.oOtherData.TagNumber != 0)
-                        {
-                            return EncodedValue = Encode(_ValueToEncode[0], _oDataType.oOtherData.Class, _oDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
-                        }
-                        else if (_oDataType.oOtherData.Class == null && _oDataType.oOtherData.TagNumber != 0)
-                        {
-                            return EncodedValue = Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", _oDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
-                        }
-                            
-                        else
-                        {
-                            DataType oParrentDataType = new DataType();
-                            oParrentDataType = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
-
-                            if (oParrentDataType.oOtherData.Class == null && oParrentDataType.oOtherData.TagNumber != 0)
-                                return EncodedValue = Encode(_ValueToEncode[0], "CONTEXT-SPECIFIC", oParrentDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
-                            else
-                                return EncodedValue = Encode(_ValueToEncode[0], oParrentDataType.oOtherData.Class, oParrentDataType.oOtherData.TagNumber, oDataType.oOtherData.TagNumber);
-                        }
+                        return EncodedValue = Encode(_ValueToEncode[0], sClass, iTagNumber, oDataType.oOtherData.TagNumber);
                     }
                 }
             }
@@ -156,22 +89,10 @@ namespace SNMP
                 }
                 else
                 {
-                    if(_oDataType.oOtherData.Class == null)
-                    {
-                        if(_oDataType.oOtherData.TagNumber == 0)
-                        {
-                            DataType oParrentDataType = new DataType();
-                            oParrentDataType = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
-                            if(oParrentDataType.oOtherData.Class != null)
-                                EncodedIdentifier = EncodeIdentifier(oParrentDataType.oOtherData.Class, true, oParrentDataType.oOtherData.TagNumber);
-                            else
-                                EncodedIdentifier = EncodeIdentifier("CONTEXT-SPECIFIC", true, oParrentDataType.oOtherData.TagNumber);
-                        }
-                        else
-                            EncodedIdentifier = EncodeIdentifier("CONTEXT-SPECIFIC", true, _oDataType.oOtherData.TagNumber);
-                    }
-                    else
-                        EncodedIdentifier = EncodeIdentifier(_oDataType.oOtherData.Class, true, _oDataType.oOtherData.TagNumber);
+                    iTagNumber = ClassificationIdentifier(_oDataHub, _oDataType).Key;
+                    sClass = ClassificationIdentifier(_oDataHub, _oDataType).Value;
+
+                    EncodedIdentifier = EncodeIdentifier(sClass, true, iTagNumber);
                 }
 
                 foreach (SequenceElement oSequenceElement in _oDataType.oSequence.lElements)
@@ -200,8 +121,7 @@ namespace SNMP
             }
         }
 
-
-        private void ClassificationIdentifier(DataHub _oDataHub, DataType _oDataType)
+        private KeyValuePair<int, string> ClassificationIdentifier(DataHub _oDataHub, DataType _oDataType)
         {
             int _iTagNumber;
             string _sClass;
@@ -218,6 +138,17 @@ namespace SNMP
                 _sClass = FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType).oOtherData.Class != null ?
                    FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType).oOtherData.Class : "CONTEXT-SPECIFIC";
             }
+            return new KeyValuePair<int, string>(_iTagNumber, _sClass);
+        }
+
+        private DataType FindParrent(DataHub _oDataHub, string ParrentName)
+        {
+            DataType _oDataType = new DataType();
+            _oDataType = _oDataHub.FindDataTypeByName(ParrentName);
+            if (_oDataType.oOtherData.TagNumber != 0)
+                return _oDataType;
+            else
+                return FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
         }
 
         private byte[] Encode(string _ValueToEncode, string _Class, int _TagNumber, int _OriginTagNumber)
@@ -583,16 +514,6 @@ namespace SNMP
             _EncodedLength[0] = Convert.ToByte(_EncodedContents.Count());           
 
             return _EncodedLength;
-        }
-
-        private DataType FindParrent(DataHub _oDataHub, string ParrentName)
-        {
-            DataType _oDataType = new DataType();
-            _oDataType = _oDataHub.FindDataTypeByName(ParrentName);
-            if (_oDataType.oOtherData.TagNumber != 0)
-                return _oDataType;
-            else
-                return FindParrent(_oDataHub, _oDataType.oOtherData.ParrentType);
         }
 
         private void PrintEncodedValue(byte[] _EncodedIdentifier, byte[] _EncodedLength, byte[] _EncodedContents)

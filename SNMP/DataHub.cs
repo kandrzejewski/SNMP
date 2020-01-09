@@ -112,7 +112,16 @@ namespace SNMP
             lDataType.Last().TypeName = "Test10";
             lDataType.Last().oOtherData.TagNumber = 60;
             lDataType.Last().oOtherData.ParrentType = "BOOLEAN";
-
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test11";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.ParrentType = "Test10";
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
+            lDataType.Add(new DataType());
+            lDataType.Last().TypeName = "Test12";
+            lDataType.Last().oOtherData.TagNumber = 60;
+            lDataType.Last().oOtherData.ParrentType = "Test9";
+            lDataType.Last().oOtherData.EncodingType = "EXPLICIT";
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
 

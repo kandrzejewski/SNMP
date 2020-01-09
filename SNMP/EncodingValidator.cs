@@ -49,7 +49,7 @@ namespace SNMP
         private DataType CreateSequence(DataHub oDataHub)
         {
             int iSequenceIndex = 0;
-            DataType _oDataType = new DataType();
+            DataType _oDataType = CloneDataType(oDataHub.FindDataTypeByName("SEQUENCE"));
             bool SequenceComplete = false;
             string SequenceChoice = string.Empty;
             string sDataTypeName;
