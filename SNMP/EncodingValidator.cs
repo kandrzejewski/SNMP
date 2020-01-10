@@ -21,7 +21,7 @@ namespace SNMP
             DataType oDataType = new DataType();
 
             Console.Write("Enter a name of Type: ");
-            sNameOfType = Console.ReadLine();
+            sNameOfType = Console.ReadLine().ToUpper();
             if(sNameOfType != "SEQUENCE")
             {
                 oDataType = _oDataHub.FindDataTypeByName(sNameOfType);
@@ -60,7 +60,7 @@ namespace SNMP
                 Console.Write("\nEnter a {0} Data Type name: ", iSequenceIndex++);
                 _oDataType.oSequence.lElements.Add(new SequenceElement());
                 _oDataType.oSequence.lElements.Last().ElementName = iSequenceIndex.ToString();
-                sDataTypeName = Console.ReadLine();
+                sDataTypeName = Console.ReadLine().ToUpper();
                 if (sDataTypeName == "SEQUENCE")
                 {
                     Console.WriteLine("\n\n────────────────────────────────────────────────────\n" + 

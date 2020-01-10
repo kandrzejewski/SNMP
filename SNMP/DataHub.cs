@@ -216,7 +216,7 @@ namespace SNMP
         {
             foreach (DataType _DataType in lDataType)
             {
-                if (_DataType.TypeName == _sName)
+                if ((_DataType.TypeName != null ? _DataType.TypeName.ToUpper() : _DataType.TypeName) == _sName.ToUpper())
                 {
                     return _DataType;
                 }
