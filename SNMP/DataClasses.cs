@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -196,6 +197,64 @@ namespace SNMP
         }
     }
 
+    public class DecoderData: WriteDataClass
+    {
+        public DataType oParrentDataType;
+        public string Complexity;
+        public string Class;
+        public Nullable<int> TagNumber;
+        public dynamic Value;
+        public int Length;
+        public List<DecoderData> lChildrens;
+
+        public DecoderData()
+        {
+            oParrentDataType = new DataType();
+            lChildrens = new List<DecoderData>();
+            Class = string.Empty;
+            TagNumber = null;
+        }
+
+        public void PresentData(int _iWriteIteration)
+        {
+            //Console.WriteLine("Decoded DataType:");              
+            WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+            ConsoleColor.Magenta, "Class", Class, false);
+            WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+            ConsoleColor.Magenta, "Complexity", Complexity, false);
+            WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+            ConsoleColor.Magenta, "TagNumber", (int)TagNumber, false);
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            WriteTreeNode(_iWriteIteration, false); Console.WriteLine("────────────────────────────────");
+            WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+            ConsoleColor.Magenta, "Length", Length, false);
+            WriteData(_iWriteIteration, ConsoleColor.DarkGreen,
+            ConsoleColor.Magenta, "Value", Value, false);
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            WriteTreeNode(_iWriteIteration, false); Console.WriteLine("────────────PARRENT─────────────");
+            if (oParrentDataType != null)
+                oParrentDataType.PresentData(_iWriteIteration);
+            else
+            {
+                WriteTreeNode(_iWriteIteration, false); Console.WriteLine("Parrent not found!");
+            }
+
+            WriteTreeNode(_iWriteIteration, false); Console.WriteLine("───────────CHILDRENS────────────");
+            if (lChildrens.Count() != 0)
+                foreach (var Child in lChildrens)
+                {
+                    Child.PresentData(_iWriteIteration + 1);
+                }
+            else
+            {
+                WriteTreeNode(_iWriteIteration, false); Console.WriteLine("Object doesn't have a childrens!");
+            }
+            WriteData(_iWriteIteration, true);
+        }
+    }
+
     public class WriteDataClass
     {
         public static int start;
@@ -210,6 +269,15 @@ namespace SNMP
         }
         public void WriteData(int _iWriteIteration, ConsoleColor _color,
             ConsoleColor _color2, string _sName, int _sValue, bool _last)
+        {
+            WriteTreeNode(_iWriteIteration, _last);
+            Console.ForegroundColor = _color;
+            Console.Write("{0}:", _sName);
+            Console.ForegroundColor = _color2;
+            Console.WriteLine(" {0}", _sValue);
+        }
+        public void WriteData(int _iWriteIteration, ConsoleColor _color,
+            ConsoleColor _color2, string _sName, bool _sValue, bool _last)
         {
             WriteTreeNode(_iWriteIteration, _last);
             Console.ForegroundColor = _color;
@@ -240,7 +308,7 @@ namespace SNMP
             Console.WriteLine("─────────────");
         }
 
-        private void WriteTreeNode(int _iWriteIteration, bool _last)
+        public void WriteTreeNode(int _iWriteIteration, bool _last)
         {
             for (int i = 0; i < _iWriteIteration; i++)
             {

@@ -18,6 +18,8 @@ namespace SNMP
             EncodingValidator oEncodingValidator = new EncodingValidator();
             EncoderData oEncoderData = new EncoderData();
             Encoder oEncoder = new Encoder();
+            Decoder oDecoder = new Decoder();
+            byte[] EncodedValue = null;
 
             oPharser.RunPharser("RFC1213-MIB");
             oDataHub.GenerateTree();
@@ -46,6 +48,8 @@ namespace SNMP
                 Console.WriteLine("E) Encode Data Type | OID");
                 Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
                 Console.WriteLine("A) Encode Data Type | Any Data Type");
+                Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
+                Console.WriteLine("G) Decode Data Type");
                 Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
                 Console.WriteLine("Q) Quit Program");
                 Console.SetCursorPosition(30, Console.CursorTop++); Console.CursorTop++;
@@ -136,8 +140,18 @@ namespace SNMP
                 {
                     Console.Clear();
                     Console.SetCursorPosition(0, 0);
-                    oEncoder.EncodingInit(oEncodingValidator.ValidateAnyDataType(oDataHub), oDataHub);
+                    EncodedValue = oEncoder.EncodingInit(oEncodingValidator.ValidateAnyDataType(oDataHub), oDataHub);
                     oEncodingValidator = new EncodingValidator();
+                    Console.ReadKey();
+                }
+                if (sExit == "G" || sExit == "g")
+                {
+                    Console.Clear();
+                    Console.SetCursorPosition(0, 0);
+                    oDecoder.DecoderInit(EncodedValue != null ? 
+                        string.Join(string.Empty, EncodedValue.Select(_Value => 
+                            Convert.ToInt32(Convert.ToString(_Value,2)).ToString("00000000"))) : 
+                        string.Empty, oDataHub);
                     Console.ReadKey();
                 }
             }

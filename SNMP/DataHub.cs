@@ -30,8 +30,6 @@ namespace SNMP
             lDataType.Last().TypeName = "BOOLEAN";
             lDataType.Last().oOtherData.Class = "UNIVERSAL";
             lDataType.Last().oOtherData.TagNumber = 1;
-            lDataType.Last().oRange.Min = 0;
-            lDataType.Last().oRange.Max = 1;
             lDataType.Add(new DataType());
             lDataType.Last().TypeName = "INTEGER";
             lDataType.Last().oRange.Min = -2147483648;
@@ -218,6 +216,19 @@ namespace SNMP
             {
                 if ((_DataType.TypeName != null ? _DataType.TypeName.ToUpper() : _DataType.TypeName) == _sName.ToUpper())
                 {
+                    return _DataType;
+                }
+            }
+            return null;
+        }
+
+        public DataType FindDataTypeByTag(string _sClass, int _iTagNumber)
+        {
+            foreach (DataType _DataType in lDataType)
+            {
+                if (_DataType.oOtherData.Class != null && _DataType.oOtherData.TagNumber != 0)
+                {
+                    if(_DataType.oOtherData.Class == _sClass && _DataType.oOtherData.TagNumber == _iTagNumber)
                     return _DataType;
                 }
             }
