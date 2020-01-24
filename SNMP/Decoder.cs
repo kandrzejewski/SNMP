@@ -23,8 +23,8 @@ namespace SNMP
 
         private Tuple<DecoderData, int> Decode(string _ValueToDecode)
         {
-            Console.WriteLine("Wywołano mnie!");
-            Console.WriteLine("Decode: " + _ValueToDecode);
+            //Console.WriteLine("Wywołano mnie!");
+            //Console.WriteLine("Decode: " + _ValueToDecode);
             DecoderData _DecodedDataType = new DecoderData();
             int IdentifierEnd;
 
@@ -38,7 +38,12 @@ namespace SNMP
             _DecodedDataType.oParrentDataType = ParrentData != null? ParrentData.Item1 : null;
             try
             {
-                if (ParrentData.Item2 != "SEQUENCE")
+                if (_DecodedDataType.Class == "CONTEXT-SPECIFIC" && (_DecodedDataType.TagNumber == 0 || _DecodedDataType.TagNumber == 1 || _DecodedDataType.TagNumber == 2))
+                {
+                    _DecodedDataType.Value = null;
+                    DecodeSequence(_ValueToDecode.Substring(IdentifierEnd + 8), _DecodedDataType.Length, out _DecodedDataType.lChildrens);
+                }
+                else if (ParrentData.Item2 != "SEQUENCE")
                     try
                     {
                         _DecodedDataType.Value = DecodeContents(ParrentData.Item2, _ValueToDecode.Substring(IdentifierEnd + 8, 8 * _DecodedDataType.Length));
@@ -55,7 +60,7 @@ namespace SNMP
                     DecodeSequence(_ValueToDecode.Substring(IdentifierEnd + 8), _DecodedDataType.Length, out _DecodedDataType.lChildrens);
                 }
             }
-            catch(System.NullReferenceException e)
+            catch(System.NullReferenceException)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\n\nError: Typ danych o Tagu {0} i Klasie {1} nie istnieje. Nie można zdekodować watości!\n\n", Identifier.Item3, Identifier.Item1);       
